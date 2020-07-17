@@ -4,11 +4,12 @@ import React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import * as Google from "expo-google-app-auth";
 
 
-import * as firebase from 'firebase'
+
+import firebase from 'firebase'
 import { firebaseConfig } from './config'
-// firebase.initializeApp(firebaseConfig)
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
@@ -26,9 +27,9 @@ export default function App() {
     <NavigationContainer>
       <StatusBar style="auto" />
       <AuthStack.Navigator>
-        <AuthStack.Screen name="Loading" component={Loading} />
-        <AuthStack.Screen name="Login" component={Login} />
-        <AuthStack.Screen name="Main" component={Main} />
+        <AuthStack.Screen name="Loading" component={Loading} options={{headerShown:false}} />
+        <AuthStack.Screen name="Login" component={Login} options={{headerShown:false}} />
+        <AuthStack.Screen name="Main" component={Main} options={{headerShown:false}} />
       </AuthStack.Navigator>
     </NavigationContainer>
   );

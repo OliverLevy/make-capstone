@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import * as Google from "expo-google-app-auth";
-import firebase from 'firebase'
+import firebase from "firebase";
 
 export default class Login extends React.Component {
   isUserEqual = (googleUser, firebaseUser) => {
@@ -24,9 +24,8 @@ export default class Login extends React.Component {
   onSignIn = (googleUser) => {
     console.log("Google Auth Response", googleUser);
     // We need to register an Observer on Firebase Auth to make sure auth is initialized.
-    var unsubscribe = firebase
-      .auth()
-      .onAuthStateChanged(function (firebaseUser) {
+    var unsubscribe = firebase.auth().onAuthStateChanged(
+      function (firebaseUser) {
         unsubscribe();
         // Check if we are already signed-in Firebase with the correct user.
         if (!this.isUserEqual(googleUser, firebaseUser)) {
@@ -40,19 +39,32 @@ export default class Login extends React.Component {
           firebase
             .auth()
             .signInWithCredential(credential)
-            .then(function (result){
-              console.log('user signed in')
-              console.log(result)
-              // firebase
-              // .database()
-              // .ref('/api/users/' + result.user.id)
-              // .set({
-              //   gmail: result.user.email,
-              //   profile_picture: result.additionalUserInfo.profile.picture,
-              //   locale: result.additionalUserInfo.profile.locale,
-              //   first_name: result.additionalUserInfo.profile.given_name,
-              //   last_name: result.additionalUserInfo.profile.family_name,
-              // })
+            .then(function (result) {
+              console.log("user signed in");
+              console.log("result", result);
+              if (result.additionalUserInfo.isNewUser) {
+                firebase
+                  .database()
+                  .ref("/users/" + result.user.uid)
+                  .set({
+                    gmail: result.user.email,
+                    profile_picture: result.additionalUserInfo.profile.picture,
+                    locale: result.additionalUserInfo.profile.locale,
+                    first_name: result.additionalUserInfo.profile.given_name,
+                    last_name: result.additionalUserInfo.profile.family_name,
+                    create_at: Date.now(),
+                  })
+                  .then(function (snapshot) {
+                    console.log("snapshot", snapshot);
+                  });
+              } else {
+                firebase
+                  .database()
+                  .ref("/users/" + result.user.uid)
+                  .update({
+                    last_logged_in: Date.now(),
+                  });
+              }
             })
             .catch(function (error) {
               // Handle Errors here.
@@ -68,7 +80,7 @@ export default class Login extends React.Component {
           console.log("User already signed-in Firebase.");
         }
       }.bind(this)
-      );
+    );
   };
 
   signInWithGoogleAsync = async () => {
@@ -81,7 +93,7 @@ export default class Login extends React.Component {
       });
 
       if (result.type === "success") {
-        this.onSignIn(result)
+        this.onSignIn(result);
         return result.accessToken;
       } else {
         return { cancelled: true };
