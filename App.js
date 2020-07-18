@@ -18,6 +18,8 @@ import Login from "./Screens/Login";
 import Loading from "./Screens/Loading";
 import Main from "./Screens/Main";
 import Projects from "./Screens/Projects";
+import Upload from "./Screens/Upload";
+import Cart from "./Screens/Cart";
 
 const AuthStack = createStackNavigator();
 const Tabs = createBottomTabNavigator();
@@ -57,12 +59,12 @@ export default class App extends React.Component {
     });
   };
 
-  componentDidMount(){
-    this.checkIfLoggedIn()
+  componentDidMount() {
+    this.checkIfLoggedIn();
   }
 
   render() {
-    console.log(this.state.loggedIn)
+    console.log(this.state.loggedIn);
     if (this.state.loggedIn === true) {
       return (
         <NavigationContainer>
@@ -70,6 +72,8 @@ export default class App extends React.Component {
           <Tabs.Navigator>
             <Tabs.Screen name="home" component={Main} />
             <Tabs.Screen name="projects" component={Projects} />
+            <Tabs.Screen name="cart" component={Cart} />
+            <Tabs.Screen name="upload" component={Upload} />
           </Tabs.Navigator>
         </NavigationContainer>
       );
