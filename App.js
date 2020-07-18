@@ -20,6 +20,7 @@ import Main from "./Screens/Main";
 import Projects from "./Screens/Projects";
 import Upload from "./Screens/Upload";
 import Cart from "./Screens/Cart";
+import Header from './Components/Header'
 
 const AuthStack = createStackNavigator();
 const Tabs = createBottomTabNavigator();
@@ -36,14 +37,6 @@ export default class App extends React.Component {
     });
     console.log("the state was set");
   };
-
-  componentDidUpdate() {
-    console.log("component updated");
-  }
-
-  componentDidMount() {
-    console.log("the component mounted");
-  }
 
   checkIfLoggedIn = () => {
     firebase.auth().onAuthStateChanged((user) => {
@@ -64,18 +57,22 @@ export default class App extends React.Component {
   }
 
   render() {
-    console.log(this.state.loggedIn);
     if (this.state.loggedIn === true) {
+      console.log(222 ,this.state.user)
       return (
-        <NavigationContainer>
-          <StatusBar style="auto" />
-          <Tabs.Navigator>
-            <Tabs.Screen name="home" component={Main} />
-            <Tabs.Screen name="projects" component={Projects} />
-            <Tabs.Screen name="cart" component={Cart} />
-            <Tabs.Screen name="upload" component={Upload} />
-          </Tabs.Navigator>
-        </NavigationContainer>
+        <UserContext.Provider value={{user: this.state.user}}>
+        
+          <NavigationContainer>
+            <StatusBar style="auto" />
+            <Header/>
+            <Tabs.Navigator>
+              <Tabs.Screen name="home" component={Main} />
+              <Tabs.Screen name="projects" component={Projects} />
+              <Tabs.Screen name="cart" component={Cart} />
+              <Tabs.Screen name="upload" component={Upload} />
+            </Tabs.Navigator>
+          </NavigationContainer>
+        </UserContext.Provider>
       );
     } else {
       return (
@@ -98,5 +95,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-  },
+  }
 });

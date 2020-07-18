@@ -2,7 +2,6 @@ import React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import * as Google from "expo-google-app-auth";
 import firebase from "firebase";
-import { UserContext } from "../Context/UserContext";
 
 export default class Login extends React.Component {
   
@@ -47,9 +46,6 @@ export default class Login extends React.Component {
             .auth()
             .signInWithCredential(credential)
             .then( (result) => {
-              console.log("user signed in");
-              console.log(111, result)
-              console.log(101, this.props)
               this.props.setUser(result)
               if (result.additionalUserInfo.isNewUser) {
                 firebase
@@ -69,7 +65,8 @@ export default class Login extends React.Component {
                   .ref("/users/" + result.user.uid)
                   .update({
                     last_logged_in: Date.now(),
-                  });
+                  })
+                  .then(console.log(666 ,result.user.uid))
               }
               
             })
@@ -115,7 +112,6 @@ export default class Login extends React.Component {
 
   render() {
     return (
-      <UserContext.Provider value={this.state.user}>
         <View style={styles.container}>
           <Text>this is the login screen</Text>
 
@@ -126,7 +122,6 @@ export default class Login extends React.Component {
             }}
           />
         </View>
-      </UserContext.Provider>
     );
   }
 }
