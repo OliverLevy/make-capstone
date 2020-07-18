@@ -1,15 +1,12 @@
 import React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import firebase from "firebase";
-import { UserProvider, UserContext } from "../Context/UserContext";
 
 
-
-export default function Main() {
+export default function Projects() {
   return (
         <View style={styles.container}>
-          <Text>Main section</Text>
-          <Button title="Sign Out" onPress={() => firebase.auth().signOut()} />
+          <Text>project page section</Text>
         </View>
   );
 }

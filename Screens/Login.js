@@ -2,8 +2,15 @@ import React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import * as Google from "expo-google-app-auth";
 import firebase from "firebase";
+import { UserContext } from "../Context/UserContext";
 
 export default class Login extends React.Component {
+  
+  state = {
+    user: {},
+  };
+
+
   isUserEqual = (googleUser, firebaseUser) => {
     if (firebaseUser) {
       var providerData = firebaseUser.providerData;
@@ -25,7 +32,7 @@ export default class Login extends React.Component {
     console.log("Google Auth Response", googleUser);
     // We need to register an Observer on Firebase Auth to make sure auth is initialized.
     var unsubscribe = firebase.auth().onAuthStateChanged(
-      function (firebaseUser) {
+       (firebaseUser) => {
         unsubscribe();
         // Check if we are already signed-in Firebase with the correct user.
         if (!this.isUserEqual(googleUser, firebaseUser)) {
@@ -39,9 +46,11 @@ export default class Login extends React.Component {
           firebase
             .auth()
             .signInWithCredential(credential)
-            .then(function (result) {
+            .then( (result) => {
               console.log("user signed in");
-              console.log("result", result);
+              console.log(111, result)
+              console.log(101, this.props)
+              this.props.setUser(result)
               if (result.additionalUserInfo.isNewUser) {
                 firebase
                   .database()
@@ -53,9 +62,6 @@ export default class Login extends React.Component {
                     first_name: result.additionalUserInfo.profile.given_name,
                     last_name: result.additionalUserInfo.profile.family_name,
                     create_at: Date.now(),
-                  })
-                  .then(function (snapshot) {
-                    console.log("snapshot", snapshot);
                   });
               } else {
                 firebase
@@ -65,7 +71,9 @@ export default class Login extends React.Component {
                     last_logged_in: Date.now(),
                   });
               }
+              
             })
+            
             .catch(function (error) {
               // Handle Errors here.
               var errorCode = error.code;
@@ -79,7 +87,7 @@ export default class Login extends React.Component {
         } else {
           console.log("User already signed-in Firebase.");
         }
-      }.bind(this)
+      }
     );
   };
 
@@ -103,12 +111,22 @@ export default class Login extends React.Component {
     }
   };
 
+  
+
   render() {
     return (
-      <View style={styles.container}>
-        <Text>this is the login screen</Text>
-        <Button title="google" onPress={() => this.signInWithGoogleAsync()} />
-      </View>
+      <UserContext.Provider value={this.state.user}>
+        <View style={styles.container}>
+          <Text>this is the login screen</Text>
+
+          <Button
+            title="google"
+            onPress={() => {
+              this.signInWithGoogleAsync();
+            }}
+          />
+        </View>
+      </UserContext.Provider>
     );
   }
 }
