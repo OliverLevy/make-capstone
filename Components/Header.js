@@ -58,27 +58,34 @@ const styles = StyleSheet.create({
   logo: {
     height: 38,
     width: 85,
-    marginHorizontal: 16
+    marginHorizontal: 16,
   },
   icon: {
     height: 40,
     width: 40,
-    marginHorizontal: 16
+    marginHorizontal: 16,
   },
   headerBarContainer: {
-    backgroundColor: 'pink'
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.34,
+    shadowRadius: 6.27,
+    elevation: 10,
   },
   headerBar: {
-    // backgroundColor: "pink",
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     // height: 110,
+    backgroundColor: 'white'
   },
   iconContainer: {
     flexDirection: "row",
-    alignItems: 'center',
-    padding: 16
+    alignItems: "center",
+    padding: 16,
   },
   avatarContainer: {
     backgroundColor: "blue",
@@ -86,5 +93,5 @@ const styles = StyleSheet.create({
     width: 48,
     borderRadius: 24,
     overflow: "hidden",
-  }
+  },
 });

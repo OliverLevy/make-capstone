@@ -35,10 +35,6 @@ export default class Main extends React.Component {
                   component={VideoPlayer}
                   options={{ headerShown: false }}
                 />
-                <HomeStack.Screen
-                  name="Profile"
-                  component={Profile}
-                />
               </HomeStack.Navigator>
             );
           } else {
