@@ -8,11 +8,14 @@ import {
   ScrollView,
   SafeAreaView,
   TouchableOpacity,
-  Modal
+  TouchableHighlight,
+  Modal,
 } from "react-native";
 import Logo from "../assets/make-logo-white.png";
 import Search from "../assets/Icon-search.png";
 import { UserContext } from "../Context/UserContext";
+
+import Profile from "../Screens/Profile";
 
 import firebase from "firebase";
 
@@ -21,53 +24,61 @@ import firebase from "firebase";
 export default class Header extends React.Component {
   static contextType = UserContext;
 
-  render() {
-    console.log(888,this.props)
+  addAvatar = () => {
     if (this.context.user.user) {
-      console.log(333, this.context.user.additionalUserInfo.profile.picture);
       return (
-        <View style={styles.headerBar}>
-          <SafeAreaView>
-            <Image source={Logo} style={styles.logo} />
-            <Image source={Search} style={styles.icon} />
-            <View style={styles.avatarContainer}>
-              <Image
-                source={{
-                  uri: this.context.user.additionalUserInfo.profile.picture,
-                }}
-                style={styles.avatar}
-              />
-            </View>
-          </SafeAreaView>
-        </View>
+        <Image
+          source={{
+            uri: this.context.user.additionalUserInfo.profile.picture,
+          }}
+          style={styles.avatar}
+        />
       );
     } else {
-      return (
-        <View style={styles.headerBar}>
-          
-        </View>
-      );
+      return <View></View>;
     }
+  };
+
+  render() {
+    return (
+      <View style={styles.headerBarContainer}>
+        <SafeAreaView style={styles.headerBar}>
+          <Image source={Logo} style={styles.logo} />
+          <View style={styles.iconContainer}>
+            <Image source={Search} style={styles.icon} />
+            <Profile />
+          </View>
+        </SafeAreaView>
+      </View>
+    );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   logo: {
     height: 38,
     width: 85,
+    marginHorizontal: 16
   },
   icon: {
     height: 40,
     width: 40,
+    marginHorizontal: 16
+  },
+  headerBarContainer: {
+    backgroundColor: 'pink'
   },
   headerBar: {
-    backgroundColor: "pink",
+    // backgroundColor: "pink",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    // height: 110,
+  },
+  iconContainer: {
+    flexDirection: "row",
+    alignItems: 'center',
+    padding: 16
   },
   avatarContainer: {
     backgroundColor: "blue",
@@ -75,9 +86,5 @@ const styles = StyleSheet.create({
     width: 48,
     borderRadius: 24,
     overflow: "hidden",
-  },
-  avatar: {
-    height: 48,
-    width: 48,
-  },
+  }
 });

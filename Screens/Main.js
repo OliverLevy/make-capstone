@@ -45,11 +45,7 @@ export default class Main extends React.Component {
             console.log(333, user.user);
             return (
               <View style={styles.container}>
-                <Text>loading...</Text>
-                <Button
-                  title="Sign Out"
-                  onPress={() => firebase.auth().signOut()}
-                />
+                <Text>loading... or sign out and try again</Text>
               </View>
             );
           }
