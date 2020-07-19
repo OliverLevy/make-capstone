@@ -47,7 +47,7 @@ export default class VideoList extends React.Component {
       const array = this.state.videoList;
       return array.map((item) => {
         return (
-          <TouchableOpacity onPress={() => this.props.navigation.navigate("video player", {id: item.title})} key={item.date_posted}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate("video player", {video_id: item.video_id})} key={item.views}>
             <View>
               <Image style={styles.poster} source={{ uri: item.poster }} />
               <Image style={styles.avatar} source={{ url: item.avatar }} />
