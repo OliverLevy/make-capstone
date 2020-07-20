@@ -14,12 +14,12 @@ export default class Projects extends React.Component {
         <ProjectStack.Screen
           name="Project list"
           component={ProjectList}
-          // options={{ headerShown: false }}
+          options={{ headerShown: false }}
         />
         <ProjectStack.Screen
           name="Project Item"
           component={ProjectItem}
-          // options={{ headerShown: false }}
+          options={{ headerShown: false }}
         />
       </ProjectStack.Navigator>
     );
