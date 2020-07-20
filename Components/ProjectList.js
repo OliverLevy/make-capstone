@@ -54,15 +54,24 @@ export default class ProjectList extends React.Component {
       console.log(2121, this.state.projectList);
       const input = this.state.projectList;
       const keyArr = Object.keys(input);
-      const reverseArr = keyArr.reverse()
+      const reverseArr = keyArr.reverse();
       return reverseArr.map((id) => {
         let output = input[id];
         return (
-          <View key={output.id} style={styles.projectList}>
-            <Text style={styles.h3}>{output.project_name}</Text>
-            <Text style={styles.p}>{output.date_created}</Text>
-            <Text>{output.id}</Text>
-          </View>
+          <TouchableOpacity
+            onPress={() =>
+              this.props.navigation.navigate("Project Item", {
+                name: output.project_name,
+              })
+            }
+            key={output.id}
+          >
+            <View style={styles.projectList}>
+              <Text style={styles.h3}>{output.project_name}</Text>
+              <Text style={styles.p}>{output.date_created}</Text>
+              <Text>{output.id}</Text>
+            </View>
+          </TouchableOpacity>
         );
       });
     }
@@ -94,9 +103,6 @@ export default class ProjectList extends React.Component {
                 this.textInput = input;
               }}
             />
-            {/* <TouchableOpacity style={styles.btn} onPress={this.addProject}>
-            <Text style={styles.btnText}>ADD</Text>
-          </TouchableOpacity> */}
           </View>
           {this.list()}
 
@@ -147,9 +153,7 @@ const styles = StyleSheet.create({
   },
   h3: {
     fontSize: 24,
-    fontWeight: '600',
+    fontWeight: "600",
   },
-  p: {
-    
-  }
+  p: {},
 });
