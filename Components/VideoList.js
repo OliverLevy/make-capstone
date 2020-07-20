@@ -72,10 +72,6 @@ export default class VideoList extends React.Component {
             <View style={styles.container}>
               <Text>This is the video list</Text>
               <View>{this.list()}</View>
-              <Button
-                title="watch this video"
-                onPress={() => this.props.navigation.navigate("video player")}
-              />
             </View>
           </ScrollView>
         </SafeAreaView>

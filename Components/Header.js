@@ -61,8 +61,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   icon: {
-    height: 40,
-    width: 40,
+    height: 30,
+    width: 30,
     marginHorizontal: 16,
   },
   headerBarContainer: {
