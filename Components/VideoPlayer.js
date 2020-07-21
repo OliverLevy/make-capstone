@@ -5,6 +5,8 @@ import { UserContext } from "../Context/UserContext";
 import { Video } from "expo-av";
 import { List } from "react-native-paper";
 import { ScrollView } from "react-native-gesture-handler";
+import ViewsIcon from "../assets/icon-view.png";
+import LikeIcon from "../assets/icon-heart.png";
 
 export default class VideoPlayer extends React.Component {
   state = {
@@ -45,6 +47,25 @@ export default class VideoPlayer extends React.Component {
     }
   }
 
+  dynaDate = (datePosted) => {
+    let seconds = (Date.now() - datePosted) / 1000;
+    let unix = new Date(datePosted);
+    let day = unix.getDate();
+    let month = unix.getMonth() + 1;
+    let year = unix.getFullYear();
+    if (seconds < 60) {
+      return `${Math.trunc(seconds)}s ago`;
+    } else if (seconds < 3600) {
+      return `${Math.trunc(seconds / 60)}m ago`;
+    } else if (seconds < 86400) {
+      return `${Math.trunc(seconds / 60 / 60)}h ago`;
+    } else if (seconds < 2592000) {
+      return `${Math.trunc(seconds / 30 / 60 / 60)}d ago`;
+    } else {
+      return `${month}/${day}/${year}`;
+    }
+  };
+
   render() {
     const video = this.state.videoPlayer;
     if (this.state.videoPlayer === null && this.state.videoUrl === null) {
@@ -57,18 +78,38 @@ export default class VideoPlayer extends React.Component {
             useNativeControls
             style={styles.backgroundVideo}
           />
-          <ScrollView>
-            <Text>This is the VideoPlayer</Text>
-            <Text>{this.props.route.params.video_id}</Text>
-            <Text>{video.video_title}</Text>
-            <Text>{video.channel_name}</Text>
-            <Text>{video.likes}</Text>
-            <Text>{video.views}</Text>
+          <ScrollView style={styles.textContainer}>
+            <View style={styles.info}>
+              <Image
+                source={{ uri: video.channel_avatar }}
+                style={styles.avatar}
+              />
+
+              <View style={styles.infoText}>
+                <View style={styles.titleContainer}>
+                  <Text style={styles.title}>{video.video_title}</Text>
+                  <Text style={styles.p}>{video.channel_name}</Text>
+                </View>
+
+                <View style={styles.dataContainer}>
+                  <Text style={styles.p}>
+                    {this.dynaDate(Number(video.date_posted))}
+                  </Text>
+                  <View style={styles.data}>
+                    <View style={styles.iconContainer}>
+                      <Image source={LikeIcon} style={styles.icon} />
+                      <Text style={styles.p}>{video.likes}</Text>
+                    </View>
+                    <View style={styles.iconContainer}>
+                      <Image source={ViewsIcon} style={styles.icon} />
+                      <Text style={styles.p}>{video.views}</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+
             <Text>{video.description}</Text>
-            <Image
-              source={{ uri: video.channel_avatar }}
-              style={{ height: 48, width: 48 }}
-            />
 
             <List.Section>
               <List.Accordion
@@ -100,15 +141,63 @@ export default class VideoPlayer extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    flex: 1
   },
   backgroundVideo: {
     // position: "absolute",
     width: "100%",
     height: 210,
     // top: 0,
+  },
+  textContainer: {
+    padding: 16,
+  },
+  avatar: {
+    height: 50,
+    width: 50,
+    borderRadius: 25,
+  },
+  iconContainer: {
+    flexDirection: "row",
+  },
+  info: {
+    flexDirection: "row",
+  },
+  infoText: {
+    flex: 1,
+  },
+  label: {
+    color: "grey",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "600",
+  },
+  p: {
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  iconContainer: {
+    flexDirection: "row",
+  },
+  icon: {
+    height: 20,
+    width: 20,
+    marginHorizontal: 8,
+  },
+  titleContainer: {
+    // width: "60%",
+    padding: 8,
+  },
+  dataContainer: {
+    // width: "40%",
+    padding: 8,
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+    flexDirection: "row",
+  },
+  data: {
+    flexDirection: "row",
   },
 });
