@@ -11,27 +11,26 @@ import {
 } from "react-native";
 import firebase from "firebase";
 import { UserContext } from "../Context/UserContext";
-
-
-
+import ViewsIcon from "../assets/icon-view.png";
+import LikeIcon from "../assets/icon-heart.png";
 
 export default class VideoList extends React.Component {
   state = {
     videoList: [],
     user: {},
-    userId: this.context.user.user.uid
+    userId: this.context.user.user.uid,
   };
 
-  static contextType = UserContext
+  static contextType = UserContext;
 
   componentDidMount() {
-    const id = this.state.userId
+    const id = this.state.userId;
     firebase
       .database()
       .ref("/0/video_list/")
       .once("value")
       .then((suc) => {
-        console.log(444,suc)
+        console.log(444, suc);
         const output = suc.val();
         this.setState({
           videoList: output,
@@ -39,28 +38,73 @@ export default class VideoList extends React.Component {
       });
   }
 
-  
- 
-
   list = () => {
     if (this.state.videoList.length !== 0) {
       const array = this.state.videoList;
-      return array.map((item) => {
+      return array.map((item, i) => {
         return (
-          <TouchableOpacity onPress={() => this.props.navigation.navigate("video player", {video_id: item.video_id})} key={item.views}>
+          <TouchableOpacity
+            onPress={() =>
+              this.props.navigation.navigate("video player", {
+                video_id: item.video_id,
+              })
+            }
+            key={i}
+          >
             <View>
               <Image style={styles.poster} source={{ uri: item.poster }} />
-              <Image style={styles.avatar} source={{ url: item.avatar }} />
-              <Text>{item.title}</Text>
-              <Text>{item.channel}</Text>
-              <Text>{item.likes}</Text>
-              <Text>{item.date_posted}</Text>
+              <View style={styles.info}>
+                <Image style={styles.avatar} source={{ url: item.avatar }} />
+
+                <View style={styles.infoText}>
+                  <View style={styles.titleContainer}>
+                    <Text style={styles.title}>{item.title}</Text>
+                    <Text style={styles.p}>{item.channel}</Text>
+                  </View>
+
+                  <View style={styles.dataContainer}>
+                    <Text style={styles.p}>
+                      {this.dynaDate(Number(item.date_posted))}
+                    </Text>
+                    <View style={styles.data} >
+                      <View style={styles.iconContainer}>
+                        <Image source={LikeIcon} style={styles.icon} />
+                        <Text style={styles.p}>{item.likes}</Text>
+                      </View>
+
+                      <View style={styles.iconContainer}>
+                        <Image source={ViewsIcon} style={styles.icon} />
+                        <Text style={styles.p}>{item.views}</Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
             </View>
           </TouchableOpacity>
         );
       });
     } else {
-      return <Text>loading...</Text>
+      return <Text>loading...</Text>;
+    }
+  };
+
+  dynaDate = (datePosted) => {
+    let seconds = (Date.now() - datePosted) / 1000;
+    let unix = new Date(datePosted);
+    let day = unix.getDate();
+    let month = unix.getMonth() + 1;
+    let year = unix.getFullYear();
+    if (seconds < 60) {
+      return `${Math.trunc(seconds)}s ago`;
+    } else if (seconds < 3600) {
+      return `${Math.trunc(seconds / 60)}m ago`;
+    } else if (seconds < 86400) {
+      return `${Math.trunc(seconds / 60 / 60)}h ago`;
+    } else if (seconds < 2592000) {
+      return `${Math.trunc(seconds / 30 / 60 / 60)}d ago`;
+    } else {
+      return `${month}/${day}/${year}`;
     }
   };
 
@@ -94,8 +138,49 @@ const styles = StyleSheet.create({
   avatar: {
     height: 50,
     width: 50,
+    borderRadius: 25,
   },
   white: {
     backgroundColor: "white",
   },
+  info: {
+    flexDirection: "row",
+    padding: 16,
+  },
+  infoText: {
+    flex: 1,
+  },
+  label: {
+    color: "grey",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "600",
+  },
+  p: {
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  iconContainer: {
+    flexDirection: "row",
+  },
+  icon: {
+    height: 20,
+    width: 20,
+    marginHorizontal: 8,
+  },
+  titleContainer: {
+    // width: "60%",
+    padding: 8,
+  },
+  dataContainer: {
+    // width: "40%",
+    padding: 8,
+    alignItems: "flex-end",
+    justifyContent: 'space-between',
+    flexDirection: "row",
+  },
+  data: {
+    flexDirection: 'row'
+  }
 });
