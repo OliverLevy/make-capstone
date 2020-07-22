@@ -28,14 +28,18 @@ export default class VideoList extends React.Component {
     firebase
       .database()
       .ref("/0/video_list/")
-      .once("value")
-      .then((suc) => {
-        console.log(444, suc);
-        const output = suc.val();
+      .on("value", (suc) => {
         this.setState({
-          videoList: output,
-        });
-      });
+          videoList: suc.val()
+        })
+      })
+      // .then((suc) => {
+      //   console.log(444, suc);
+      //   const output = suc.val();
+      //   this.setState({
+      //     videoList: output,
+      //   });
+      // });
   }
 
   list = () => {
