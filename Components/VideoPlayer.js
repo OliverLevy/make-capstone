@@ -17,17 +17,16 @@ export default class VideoPlayer extends React.Component {
   };
 
   componentDidMount() {
-    firebase
-      .storage()
-      .ref(`video_player/${this.props.route.params.video_id}.mp4`)
-      .getDownloadURL()
-      .then((url) => {
-        console.log(url);
-        this.setState({
-          videoUrl: url,
-        });
-      });
-    console.log(911, this.props.route.params.video_id);
+    // firebase
+    //   .storage()
+    //   .ref(`video_player/${this.props.route.params.video_id}.mp4`)
+    //   .getDownloadURL()
+    //   .then((url) => {
+    //     console.log(url);
+    //     this.setState({
+    //       videoUrl: url,
+    //     });
+    //   });
     firebase
       .database()
       .ref(`/video_player/${this.props.route.params.video_id}`)
@@ -74,7 +73,7 @@ export default class VideoPlayer extends React.Component {
       return (
         <View style={styles.container}>
           <Video
-            source={{ uri: this.state.videoUrl }}
+            source={{ uri: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" }}
             useNativeControls
             style={styles.backgroundVideo}
           />

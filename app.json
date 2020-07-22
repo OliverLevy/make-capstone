@@ -17,6 +17,8 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.oliver.make",
+      "buildNumber": "1.0.0",
       "supportsTablet": true
     },
     "web": {
