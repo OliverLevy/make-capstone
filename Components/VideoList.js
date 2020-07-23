@@ -27,58 +27,75 @@ export default class VideoList extends React.Component {
     const id = this.state.userId;
     firebase
       .database()
-      .ref("/0/video_list/")
+      .ref("/public/video_list/")
       .on("value", (suc) => {
+        console.log(666, suc.val());
         this.setState({
-          videoList: suc.val()
-        })
-      })
-      // .then((suc) => {
-      //   console.log(444, suc);
-      //   const output = suc.val();
-      //   this.setState({
-      //     videoList: output,
-      //   });
-      // });
+          videoList: suc.val(),
+        });
+      });
+    // .then((suc) => {
+    //   console.log(444, suc);
+    //   const output = suc.val();
+    //   this.setState({
+    //     videoList: output,
+    //   });
+    // });
   }
+
+  getPoster = (id) => {
+    return firebase
+      .storage()
+      .ref(`/videos_poster/${id}`)
+      .getDownloadURL()
+      .then((url) => {
+        return url;
+      })
+      .catch((err) => {
+        console.log(3663, err);
+      });
+  };
 
   list = () => {
     if (this.state.videoList.length !== 0) {
       const array = this.state.videoList;
-      return array.map((item, i) => {
+      const keyArr = Object.keys(array);
+      return keyArr.map((id) => {
+        let output = array[id];
+        let imgUrl = this.getPoster(output.id);
         return (
           <TouchableOpacity
             onPress={() =>
               this.props.navigation.navigate("video player", {
-                video_id: item.video_id,
+                video_id: output.video_id,
               })
             }
-            key={i}
+            key={id}
           >
             <View>
-              <Image style={styles.poster} source={{ uri: item.poster }} />
+              <Image style={styles.poster} source={{ uri: output.avatar }} />
               <View style={styles.info}>
-                <Image style={styles.avatar} source={{ url: item.avatar }} />
+                <Image style={styles.avatar} source={{ url: output.avatar }} />
 
                 <View style={styles.infoText}>
                   <View style={styles.titleContainer}>
-                    <Text style={styles.title}>{item.title}</Text>
-                    <Text style={styles.p}>{item.channel}</Text>
+                    <Text style={styles.title}>{output.title}</Text>
+                    <Text style={styles.p}>{output.channel}</Text>
                   </View>
 
                   <View style={styles.dataContainer}>
                     <Text style={styles.p}>
-                      {this.dynaDate(Number(item.date_posted))}
+                      {this.dynaDate(Number(output.date_posted))}
                     </Text>
-                    <View style={styles.data} >
+                    <View style={styles.data}>
                       <View style={styles.iconContainer}>
                         <Image source={LikeIcon} style={styles.icon} />
-                        <Text style={styles.p}>{item.likes}</Text>
+                        <Text style={styles.p}>{output.likes}</Text>
                       </View>
 
                       <View style={styles.iconContainer}>
                         <Image source={ViewsIcon} style={styles.icon} />
-                        <Text style={styles.p}>{item.views}</Text>
+                        <Text style={styles.p}>{output.views}</Text>
                       </View>
                     </View>
                   </View>
@@ -118,7 +135,6 @@ export default class VideoList extends React.Component {
         <SafeAreaView>
           <ScrollView>
             <View style={styles.container}>
-              <Text>This is the video list</Text>
               <View>{this.list()}</View>
             </View>
           </ScrollView>
@@ -181,10 +197,10 @@ const styles = StyleSheet.create({
     // width: "40%",
     padding: 8,
     alignItems: "flex-end",
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     flexDirection: "row",
   },
   data: {
-    flexDirection: 'row'
-  }
+    flexDirection: "row",
+  },
 });

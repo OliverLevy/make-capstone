@@ -51,7 +51,6 @@ export default class ProjectList extends React.Component {
 
   list = () => {
     if (this.state.projectList !== null) {
-      console.log(2121, this.state.projectList);
       const input = this.state.projectList;
       const keyArr = Object.keys(input);
       const reverseArr = keyArr.reverse();

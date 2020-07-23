@@ -100,9 +100,10 @@ export default class Upload extends React.Component {
 
   handleSubmit = () => {
     const { video, poster, title, description, steps, materials } = this.state;
-
+    const datePosted = Date.now();
     const uploadKey = firebase.database().ref("/users/").child("uploads").push()
       .key;
+    // upload video info to the users 'upload'
     firebase
       .database()
       .ref("/users/" + this.context.user.user.uid)
@@ -116,11 +117,34 @@ export default class Upload extends React.Component {
         materials: materials,
         poster_path: `video_poster/${uploadKey}`,
         video_path: `videos/${uploadKey}`,
-        date_created: Date.now(),
+        date_created: datePosted,
       });
 
-    // const storageref = firebase.storage().ref()
-    // console.log(222, uploadKey)
+    //get url for video
+    firebase
+    .storageRef()
+    .child(`videos_poster/${uploadKey}`)
+    .getDownloadURL()
+    .then(suc => {
+      console.log(2306 ,suc)
+    })
+
+    // upload to database video_list
+    firebase
+      .database()
+      .ref('/public/')
+      .child('video_list/')
+      .push()
+      .update({
+        avatar: this.context.user.additionalUserInfo.profile.picture,
+        channel: this.context.user.user.displayName,
+        date_posted: datePosted,
+        likes: 0,
+        views: 0,
+        id: uploadKey,
+        title: title,
+        poster_path: `videos_poster/${uploadKey}`,
+      });
 
     this.uploadVideo(video.uri, uploadKey)
       .then(() => {
