@@ -218,29 +218,7 @@ export default class Upload extends React.Component {
     this._scrollPosition.scrollTo({ y: this.state.scrollY + 48 });
   };
 
-  handleSubmit = () => {
-    // upload to database video_list
-    firebase
-      .database()
-      .ref("/public/")
-      .child("video_list/")
-      .push()
-      .update({
-        avatar: this.context.user.additionalUserInfo.profile.picture,
-        channel: this.context.user.user.displayName,
-        date_posted: datePosted,
-        likes: 0,
-        views: 0,
-        id: uploadKey,
-        title: title,
-        poster_path: `videos_poster/${uploadKey}`,
-      });
-  };
-  //
-  //
-  //
-  //
-  //
+
   newSubmit = async () => {
     const { video, poster, title, description, steps, materials } = this.state;
     const datePosted = Date.now();
