@@ -82,7 +82,6 @@ export default class ProjectList extends React.Component {
   };
 
   render() {
-    console.log(462, this.state.projectList);
     return (
       <View style={styles.container}>
         <ScrollView>

@@ -270,7 +270,18 @@ export default class Upload extends React.Component {
     // once complete, get the downloadurl from firebase and set state of videourl
     let posterUrl = await this.getPosterUrl(uploadKey);
     // get state of all the other text inputs and upload them to the database
-    const uploadData = {
+    const videoListData = {
+      avatar: this.context.user.additionalUserInfo.profile.picture,
+      channel: this.context.user.user.displayName,
+      date_posted: datePosted,
+      likes: 0,
+      views: 0,
+      id: uploadKey,
+      title: title,
+      poster_path: posterUrl,
+    };
+
+    const videoPlayerData = {
       channel_avatar: this.context.user.additionalUserInfo.profile.picture,
       channel_name: this.context.user.user.displayName,
       comments: [],
@@ -281,15 +292,29 @@ export default class Upload extends React.Component {
       poster: posterUrl,
       steps: steps,
       video_id: uploadKey,
+      video_url: videoUrl,
       video_title: title,
       views: 0,
     };
-    const updates = {}
-    updates[`/public/video_list/${uploadKey}`] = uploadData
-    updates[`/public/video_player/${uploadKey}`] = uploadData
-    updates[`/users/${this.context.user.user.uid}/uploads/${uploadKey}`] = uploadData
+    const userData = {
+      id: uploadKey,
+      title: title,
+      description: description,
+      steps: steps,
+      materials: materials,
+      poster_url: posterUrl,
+      video_url: videoUrl,
+      date_created: datePosted,
+    };
 
-    firebase.database().ref().update(updates)
+    const updates = {};
+    updates[`/public/video_list/${uploadKey}`] = videoListData;
+    updates[`/public/video_player/${uploadKey}`] = videoPlayerData;
+    updates[
+      `/users/${this.context.user.user.uid}/uploads/${uploadKey}`
+    ] = userData;
+
+    firebase.database().ref().update(updates);
 
     // public database
     // firebase

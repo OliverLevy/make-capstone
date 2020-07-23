@@ -17,7 +17,7 @@ export default class VideoPlayer extends React.Component {
   };
 
   componentDidMount() {
-    console.log(this.props.route.params.video_id.id)
+    console.log(this.props.route.params.video_id.id);
     firebase
       .database()
       .ref(`public/video_player/${this.props.route.params.video_id.id}`)
@@ -65,8 +65,7 @@ export default class VideoPlayer extends React.Component {
         <View style={styles.container}>
           <Video
             source={{
-              uri:
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+              uri: video.video_url,
             }}
             useNativeControls
             style={styles.backgroundVideo}
@@ -106,15 +105,12 @@ export default class VideoPlayer extends React.Component {
 
             <List.Section>
               <List.Accordion
-                title="STEP BY STEP"
+                title="STEP BY STEP INSTRUCTIONS"
                 description="steps to keep you on task!"
               >
                 {video.steps.map((item, i) => {
                   return <List.Item title={item} key={i} />;
                 })}
-
-                <List.Item title="this is in the list" />
-                <List.Item title="this is in the list" />
               </List.Accordion>
               <List.Accordion
                 title="MATERIALS"
