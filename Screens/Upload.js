@@ -54,6 +54,7 @@ export default class Upload extends React.Component {
     }
   };
 
+  // step 1
   handleChooseVideo = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -98,70 +99,6 @@ export default class Upload extends React.Component {
     }
   };
 
-  handleSubmit = () => {
-    const { video, poster, title, description, steps, materials } = this.state;
-    const datePosted = Date.now();
-    const uploadKey = firebase.database().ref("/users/").child("uploads").push()
-      .key;
-    // upload video info to the users 'upload'
-    firebase
-      .database()
-      .ref("/users/" + this.context.user.user.uid)
-      .child(`uploads/`)
-      .push()
-      .update({
-        id: uploadKey,
-        title: title,
-        description: description,
-        steps: steps,
-        materials: materials,
-        poster_path: `video_poster/${uploadKey}`,
-        video_path: `videos/${uploadKey}`,
-        date_created: datePosted,
-      });
-
-    //get url for video
-    firebase
-    .storageRef()
-    .child(`videos_poster/${uploadKey}`)
-    .getDownloadURL()
-    .then(suc => {
-      console.log(2306 ,suc)
-    })
-
-    // upload to database video_list
-    firebase
-      .database()
-      .ref('/public/')
-      .child('video_list/')
-      .push()
-      .update({
-        avatar: this.context.user.additionalUserInfo.profile.picture,
-        channel: this.context.user.user.displayName,
-        date_posted: datePosted,
-        likes: 0,
-        views: 0,
-        id: uploadKey,
-        title: title,
-        poster_path: `videos_poster/${uploadKey}`,
-      });
-
-    this.uploadVideo(video.uri, uploadKey)
-      .then(() => {
-        Alert.alert("video upload success");
-      })
-      .catch((error) => {
-        Alert.alert(error);
-      });
-    this.uploadVideoPoster(poster.uri, uploadKey)
-      .then(() => {
-        Alert.alert("poster upload success");
-      })
-      .catch((error) => {
-        Alert.alert(error);
-      });
-  };
-
   uploadVideo = async (uri, videoId) => {
     const response = await fetch(uri);
     const blob = await response.blob();
@@ -170,8 +107,11 @@ export default class Upload extends React.Component {
       .storage()
       .ref()
       .child("videos/" + videoId);
+
     return ref.put(blob);
   };
+
+  //get url for video
 
   uploadVideoPoster = async (uri, videoPosterId) => {
     const response = await fetch(uri);
@@ -182,6 +122,19 @@ export default class Upload extends React.Component {
       .ref()
       .child("videos_poster/" + videoPosterId);
     return ref.put(blob);
+  };
+
+  getPosterUrl = (id) => {
+    firebase
+      .storage()
+      .ref(`/videos_poster/${id}`)
+      .getDownloadURL()
+      .then((url) => {
+        console.log(911, url);
+      })
+      .catch((err) => {
+        console.log(3663, err);
+      });
   };
 
   addToStep = () => {
@@ -246,7 +199,72 @@ export default class Upload extends React.Component {
     this._scrollPosition.scrollTo({ y: this.state.scrollY + 48 });
   };
 
-  //if all of these states hold value, upload the state from video, poster, title, description, steps, materials to their respective locations database and storage
+  handleSubmit = () => {
+    const { video, poster, title, description, steps, materials } = this.state;
+    const datePosted = Date.now();
+    const uploadKey = firebase.database().ref("/users/").child("uploads").push()
+      .key;
+    // upload video info to the users 'upload'
+    firebase
+      .database()
+      .ref("/users/" + this.context.user.user.uid)
+      .child(`uploads/`)
+      .push()
+      .update({
+        id: uploadKey,
+        title: title,
+        description: description,
+        steps: steps,
+        materials: materials,
+        poster_path: `video_poster/${uploadKey}`,
+        video_path: `videos/${uploadKey}`,
+        date_created: datePosted,
+      });
+
+    // upload to database video_list
+    firebase
+      .database()
+      .ref("/public/")
+      .child("video_list/")
+      .push()
+      .update({
+        avatar: this.context.user.additionalUserInfo.profile.picture,
+        channel: this.context.user.user.displayName,
+        date_posted: datePosted,
+        likes: 0,
+        views: 0,
+        id: uploadKey,
+        title: title,
+        poster_path: `videos_poster/${uploadKey}`,
+      });
+
+    this.uploadVideo(video.uri, uploadKey)
+      .then(() => {
+        Alert.alert("video upload success");
+      })
+      .catch((error) => {
+        Alert.alert(error);
+      });
+    this.uploadVideoPoster(poster.uri, uploadKey)
+      .then(() => {
+        Alert.alert("poster upload success");
+      })
+      .catch((error) => {
+        Alert.alert(error);
+      });
+  };
+
+  newSubmit = async () => {
+    // upload the video
+    // once complete, get the downloadurl from firebase and set state of videourl
+    // upload the poster
+    // once complete, get the downloadurl from firebase and set state of videourl
+    // set state of all the other text inputs and upload them to the database
+    // public database
+    // video player database
+    // user's uploads database
+  };
+
 
   render() {
     const { video, poster, steps, materials } = this.state;
@@ -348,6 +366,7 @@ export default class Upload extends React.Component {
             }}
           />
         </View>
+
         <TouchableOpacity onPress={this.handleSubmit} style={styles.btn}>
           <Text style={styles.btnText}>UPLOAD</Text>
         </TouchableOpacity>

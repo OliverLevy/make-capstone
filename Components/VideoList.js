@@ -44,7 +44,7 @@ export default class VideoList extends React.Component {
   }
 
   getPoster = (id) => {
-    return firebase
+    firebase
       .storage()
       .ref(`/videos_poster/${id}`)
       .getDownloadURL()
@@ -62,7 +62,7 @@ export default class VideoList extends React.Component {
       const keyArr = Object.keys(array);
       return keyArr.map((id) => {
         let output = array[id];
-        let imgUrl = this.getPoster(output.id);
+        let imgUrl = this.getPoster(output.id); //get rid of this
         return (
           <TouchableOpacity
             onPress={() =>
@@ -73,9 +73,9 @@ export default class VideoList extends React.Component {
             key={id}
           >
             <View>
-              <Image style={styles.poster} source={{ uri: output.avatar }} />
+              <Image style={styles.poster} source={{ uri: imgUrl }} />
               <View style={styles.info}>
-                <Image style={styles.avatar} source={{ url: output.avatar }} />
+                <Image style={styles.avatar} source={{ uri: output.avatar }} />
 
                 <View style={styles.infoText}>
                   <View style={styles.titleContainer}>
