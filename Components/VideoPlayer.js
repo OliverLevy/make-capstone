@@ -17,19 +17,10 @@ export default class VideoPlayer extends React.Component {
   };
 
   componentDidMount() {
-    // firebase
-    //   .storage()
-    //   .ref(`video_player/${this.props.route.params.video_id}.mp4`)
-    //   .getDownloadURL()
-    //   .then((url) => {
-    //     console.log(url);
-    //     this.setState({
-    //       videoUrl: url,
-    //     });
-    //   });
+    console.log(this.props.route.params.video_id.id)
     firebase
       .database()
-      .ref(`/video_player/${this.props.route.params.video_id}`)
+      .ref(`public/video_player/${this.props.route.params.video_id.id}`)
       .once("value")
       .then((suc) => {
         console.log(6969, suc.val());
@@ -67,13 +58,16 @@ export default class VideoPlayer extends React.Component {
 
   render() {
     const video = this.state.videoPlayer;
-    if (this.state.videoPlayer === null && this.state.videoUrl === null) {
+    if (this.state.videoPlayer === null) {
       return <Text>Loading...</Text>;
     } else {
       return (
         <View style={styles.container}>
           <Video
-            source={{ uri: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" }}
+            source={{
+              uri:
+                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            }}
             useNativeControls
             style={styles.backgroundVideo}
           />
@@ -141,7 +135,7 @@ export default class VideoPlayer extends React.Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
-    flex: 1
+    flex: 1,
   },
   backgroundVideo: {
     // position: "absolute",

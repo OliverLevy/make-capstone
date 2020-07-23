@@ -28,7 +28,9 @@ import { UserContext } from "../Context/UserContext";
 export default class Upload extends React.Component {
   state = {
     video: null,
+    video_url: null,
     poster: null,
+    poster_url: null,
     title: null,
     description: null,
     newStep: null,
@@ -124,17 +126,34 @@ export default class Upload extends React.Component {
     return ref.put(blob);
   };
 
-  getPosterUrl = (id) => {
-    firebase
+  getVideoUrl = (id) => {
+    const output = firebase
       .storage()
-      .ref(`/videos_poster/${id}`)
+      .ref(`/videos/${id}`)
       .getDownloadURL()
-      .then((url) => {
-        console.log(911, url);
+      .then((videoUrl) => {
+        console.log(911, videoUrl);
+        return videoUrl;
       })
       .catch((err) => {
         console.log(3663, err);
       });
+    return output;
+  };
+
+  getPosterUrl = (id) => {
+    const output = firebase
+      .storage()
+      .ref(`/videos_poster/${id}`)
+      .getDownloadURL()
+      .then((posterUrl) => {
+        console.log(119, posterUrl);
+        return posterUrl;
+      })
+      .catch((err) => {
+        console.log(3663, err);
+      });
+    return output;
   };
 
   addToStep = () => {
@@ -200,27 +219,6 @@ export default class Upload extends React.Component {
   };
 
   handleSubmit = () => {
-    const { video, poster, title, description, steps, materials } = this.state;
-    const datePosted = Date.now();
-    const uploadKey = firebase.database().ref("/users/").child("uploads").push()
-      .key;
-    // upload video info to the users 'upload'
-    firebase
-      .database()
-      .ref("/users/" + this.context.user.user.uid)
-      .child(`uploads/`)
-      .push()
-      .update({
-        id: uploadKey,
-        title: title,
-        description: description,
-        steps: steps,
-        materials: materials,
-        poster_path: `video_poster/${uploadKey}`,
-        video_path: `videos/${uploadKey}`,
-        date_created: datePosted,
-      });
-
     // upload to database video_list
     firebase
       .database()
@@ -237,34 +235,119 @@ export default class Upload extends React.Component {
         title: title,
         poster_path: `videos_poster/${uploadKey}`,
       });
+  };
+  //
+  //
+  //
+  //
+  //
+  newSubmit = async () => {
+    const { video, poster, title, description, steps, materials } = this.state;
+    const datePosted = Date.now();
+    const uploadKey = firebase.database().ref().child("uploads").push().key;
 
-    this.uploadVideo(video.uri, uploadKey)
+    // upload the video
+    await this.uploadVideo(video.uri, uploadKey)
       .then(() => {
         Alert.alert("video upload success");
       })
       .catch((error) => {
         Alert.alert(error);
       });
-    this.uploadVideoPoster(poster.uri, uploadKey)
+
+    // once complete, get the downloadurl from firebase and set state of videourl
+    let videoUrl = await this.getVideoUrl(uploadKey);
+
+    // upload the poster
+    await this.uploadVideoPoster(poster.uri, uploadKey)
       .then(() => {
         Alert.alert("poster upload success");
       })
       .catch((error) => {
         Alert.alert(error);
       });
-  };
 
-  newSubmit = async () => {
-    // upload the video
     // once complete, get the downloadurl from firebase and set state of videourl
-    // upload the poster
-    // once complete, get the downloadurl from firebase and set state of videourl
-    // set state of all the other text inputs and upload them to the database
+    let posterUrl = await this.getPosterUrl(uploadKey);
+    // get state of all the other text inputs and upload them to the database
+    const uploadData = {
+      channel_avatar: this.context.user.additionalUserInfo.profile.picture,
+      channel_name: this.context.user.user.displayName,
+      comments: [],
+      date_posted: datePosted,
+      description: description,
+      likes: 0,
+      materials: materials,
+      poster: posterUrl,
+      steps: steps,
+      video_id: uploadKey,
+      video_title: title,
+      views: 0,
+    };
+    const updates = {}
+    updates[`/public/video_list/${uploadKey}`] = uploadData
+    updates[`/public/video_player/${uploadKey}`] = uploadData
+    updates[`/users/${this.context.user.user.uid}/uploads/${uploadKey}`] = uploadData
+
+    firebase.database().ref().update(updates)
+
     // public database
-    // video player database
-    // user's uploads database
-  };
+    // firebase
+    //   .database()
+    //   .ref(`/public/video_list/`)
+    //   .child(`${uploadKey}`)
+    //   .push()
+    //   .update({
+    //     avatar: this.context.user.additionalUserInfo.profile.picture,
+    //     channel: this.context.user.user.displayName,
+    //     date_posted: datePosted,
+    //     likes: 0,
+    //     views: 0,
+    //     id: uploadKey,
+    //     title: title,
+    //     poster_path: posterUrl,
+    //   });
 
+    // // video player database
+
+    // firebase
+    //   .database()
+    //   .ref(`/public/video_player/`)
+    //   .child(`${uploadKey}`)
+    //   .push()
+    //   .update({
+    //     channel_avatar: this.context.user.additionalUserInfo.profile.picture,
+    //     channel_name: this.context.user.user.displayName,
+    //     comments: [],
+    //     date_posted: datePosted,
+    //     description: description,
+    //     likes: 0,
+    //     materials: materials,
+    //     poster: posterUrl,
+    //     steps: steps,
+    //     video_id: uploadKey,
+    //     video_title: title,
+    //     views: 0,
+    //   });
+
+    // // user's uploads database
+    // firebase
+    //   .database()
+    //   .ref(`/users/${this.context.user.user.uid}/uploads/`)
+    //   .child(`${uploadKey}`)
+    //   .push()
+    //   .update({
+    //     id: uploadKey,
+    //     title: title,
+    //     description: description,
+    //     steps: steps,
+    //     materials: materials,
+    //     poster_url: posterUrl,
+    //     video_url: videoUrl,
+    //     date_created: datePosted,
+    //   });
+    return Alert.alert("upload successful");
+  };
 
   render() {
     const { video, poster, steps, materials } = this.state;
@@ -367,7 +450,7 @@ export default class Upload extends React.Component {
           />
         </View>
 
-        <TouchableOpacity onPress={this.handleSubmit} style={styles.btn}>
+        <TouchableOpacity onPress={this.newSubmit} style={styles.btn}>
           <Text style={styles.btnText}>UPLOAD</Text>
         </TouchableOpacity>
         <TouchableOpacity

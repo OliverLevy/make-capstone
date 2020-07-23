@@ -57,7 +57,7 @@ export default class VideoList extends React.Component {
   };
 
   list = () => {
-    if (this.state.videoList.length !== 0) {
+    if (this.state.videoList && this.state.videoList.length !== 0) {
       const array = this.state.videoList;
       const keyArr = Object.keys(array);
       return keyArr.map((id) => {
@@ -67,13 +67,13 @@ export default class VideoList extends React.Component {
           <TouchableOpacity
             onPress={() =>
               this.props.navigation.navigate("video player", {
-                video_id: output.video_id,
+                video_id: output,
               })
             }
             key={id}
           >
             <View>
-              <Image style={styles.poster} source={{ uri: imgUrl }} />
+              <Image style={styles.poster} source={{ uri: output.poster_path }} />
               <View style={styles.info}>
                 <Image style={styles.avatar} source={{ uri: output.avatar }} />
 
