@@ -1,10 +1,19 @@
 import React from "react";
-import { StyleSheet, Text, View, Button, Image } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import firebase from "firebase";
 import { UserContext } from "../Context/UserContext";
 import { Video } from "expo-av";
 import { List } from "react-native-paper";
 import { ScrollView } from "react-native-gesture-handler";
+import DropDownPicker from "react-native-dropdown-picker";
+
 import ViewsIcon from "../assets/icon-view.png";
 import LikeIcon from "../assets/icon-heart.png";
 
@@ -12,9 +21,12 @@ export default class VideoPlayer extends React.Component {
   state = {
     videoUrl: null,
     videoPlayer: null,
+    userProjects: null,
     stepIsOpen: false,
     materialIsOpen: false,
   };
+
+  static contextType = UserContext;
 
   componentDidMount() {
     console.log(this.props.route.params.video_id.id);
@@ -29,6 +41,17 @@ export default class VideoPlayer extends React.Component {
           videoPlayer: output,
         });
       });
+
+    firebase
+      .database()
+      .ref(`users/${this.context.user.user.uid}`)
+      .on("value", (suc) => {
+        console.log(7070, suc.val());
+        const output = suc.val();
+        this.setState({
+          userProjects: output,
+        });
+      });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -36,6 +59,18 @@ export default class VideoPlayer extends React.Component {
       console.log(321, this.state);
     }
   }
+
+  projectList = () => {
+    if (this.state.userProjects !== null) {
+      const input = this.state.userProjects.projects;
+      const keyArr = Object.keys(input);
+      const reversedArr = keyArr.reverse();
+      return reversedArr.map((itemKey) => {
+        let output = input[itemKey];
+        return { label: output.project_name, value: output.project_name };
+      });
+    }
+  };
 
   dynaDate = (datePosted) => {
     let seconds = (Date.now() - datePosted) / 1000;
@@ -63,13 +98,13 @@ export default class VideoPlayer extends React.Component {
     } else {
       return (
         <View style={styles.container}>
-          <Video
+          {/* <Video
             source={{
               uri: video.video_url,
             }}
             useNativeControls
             style={styles.backgroundVideo}
-          />
+          /> */}
           <ScrollView style={styles.textContainer}>
             <View style={styles.info}>
               <Image
@@ -82,7 +117,6 @@ export default class VideoPlayer extends React.Component {
                   <Text style={styles.title}>{video.video_title}</Text>
                   <Text style={styles.p}>{video.channel_name}</Text>
                 </View>
-
                 <View style={styles.dataContainer}>
                   <Text style={styles.p}>
                     {this.dynaDate(Number(video.date_posted))}
@@ -102,6 +136,24 @@ export default class VideoPlayer extends React.Component {
             </View>
 
             <Text>{video.description}</Text>
+
+            <View style={styles.projectDropdownContainer}>
+              {this.state.userProjects && (
+                <DropDownPicker
+                  items={this.projectList()}
+                  multiple={true}
+                  style={styles.btn}
+                  dropDownStyle={styles.dropDownPicker}
+                  placeholder="SAVE TO PROJECT"
+                  dropDownMaxHeight={200}
+                  // onChangeItem={(item) =>
+                  //   this.setState({
+                  //     savedTo: item.value,
+                  //   })
+                  // }
+                />
+              )}
+            </View>
 
             <List.Section>
               <List.Accordion
@@ -188,5 +240,19 @@ const styles = StyleSheet.create({
   },
   data: {
     flexDirection: "row",
+  },
+  btn: {
+    height: 48,
+    width: "100%",
+    borderColor: "#3772FF",
+    borderWidth: 2,
+  },
+  dropDownPicker: {
+    borderColor: "#3772FF",
+    borderWidth: 2,
+  },
+  projectDropdownContainer: {
+    marginVertical: 16,
+    zIndex: 2
   },
 });
