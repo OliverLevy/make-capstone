@@ -70,23 +70,31 @@ export default class VideoPlayer extends React.Component {
     }
   };
 
+  updateSteps = (stepsArr) => {
+    const newList = stepsArr.map(step => {
+      return {item: step, is_done: false}
+    })
+    return newList
+  }
+
   saveProject = (item) => {
-    console.log(661, item);
     const { videoPlayer } = this.state;
-    console.log(videoPlayer.video_id);
+    const steps = this.updateSteps(videoPlayer.steps)
+    const materials = this.updateSteps(videoPlayer.materials)
     const videoData = {
       video_id: videoPlayer.video_id,
       video_title: videoPlayer.video_title,
       video_url: videoPlayer.video_url,
-      steps: videoPlayer.steps,
-      materials: videoPlayer.materials,
+      steps: steps,
+      materials: materials,
     };
-
+    
+    
     item.map((projectKey) => {
       firebase
         .database()
         .ref(
-          `/users/${this.context.user.user.uid}/projects/${projectKey}/${videoPlayer.video_id}`
+          `/users/${this.context.user.user.uid}/projects/${projectKey}/saved/${videoPlayer.video_id}`
         )
 
         .update(videoData);
