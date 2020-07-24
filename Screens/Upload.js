@@ -218,7 +218,6 @@ export default class Upload extends React.Component {
     this._scrollPosition.scrollTo({ y: this.state.scrollY + 48 });
   };
 
-
   newSubmit = async () => {
     const { video, poster, title, description, steps, materials } = this.state;
     const datePosted = Date.now();
@@ -294,61 +293,6 @@ export default class Upload extends React.Component {
 
     firebase.database().ref().update(updates);
 
-    // public database
-    // firebase
-    //   .database()
-    //   .ref(`/public/video_list/`)
-    //   .child(`${uploadKey}`)
-    //   .push()
-    //   .update({
-    //     avatar: this.context.user.additionalUserInfo.profile.picture,
-    //     channel: this.context.user.user.displayName,
-    //     date_posted: datePosted,
-    //     likes: 0,
-    //     views: 0,
-    //     id: uploadKey,
-    //     title: title,
-    //     poster_path: posterUrl,
-    //   });
-
-    // // video player database
-
-    // firebase
-    //   .database()
-    //   .ref(`/public/video_player/`)
-    //   .child(`${uploadKey}`)
-    //   .push()
-    //   .update({
-    //     channel_avatar: this.context.user.additionalUserInfo.profile.picture,
-    //     channel_name: this.context.user.user.displayName,
-    //     comments: [],
-    //     date_posted: datePosted,
-    //     description: description,
-    //     likes: 0,
-    //     materials: materials,
-    //     poster: posterUrl,
-    //     steps: steps,
-    //     video_id: uploadKey,
-    //     video_title: title,
-    //     views: 0,
-    //   });
-
-    // // user's uploads database
-    // firebase
-    //   .database()
-    //   .ref(`/users/${this.context.user.user.uid}/uploads/`)
-    //   .child(`${uploadKey}`)
-    //   .push()
-    //   .update({
-    //     id: uploadKey,
-    //     title: title,
-    //     description: description,
-    //     steps: steps,
-    //     materials: materials,
-    //     poster_url: posterUrl,
-    //     video_url: videoUrl,
-    //     date_created: datePosted,
-    //   });
     return Alert.alert("upload successful");
   };
 
