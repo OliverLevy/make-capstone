@@ -53,7 +53,7 @@ export default class ProjectList extends React.Component {
           <TouchableOpacity
             onPress={() =>
               this.props.navigation.navigate("Project Item", {
-                name: output.project_name,
+                id: output.id,
               })
             }
             key={output.id}

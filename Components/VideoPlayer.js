@@ -35,7 +35,6 @@ export default class VideoPlayer extends React.Component {
       .ref(`public/video_player/${this.props.route.params.video_id.id}`)
       .once("value")
       .then((suc) => {
-        console.log(6969, suc.val());
         const output = suc.val();
         this.setState({
           videoPlayer: output,
@@ -46,7 +45,6 @@ export default class VideoPlayer extends React.Component {
       .database()
       .ref(`users/${this.context.user.user.uid}`)
       .on("value", (suc) => {
-        console.log(7070, suc.val());
         const output = suc.val();
         this.setState({
           userProjects: output,
@@ -67,9 +65,36 @@ export default class VideoPlayer extends React.Component {
       const reversedArr = keyArr.reverse();
       return reversedArr.map((itemKey) => {
         let output = input[itemKey];
-        return { label: output.project_name, value: output.project_name };
+        return { label: output.project_name, value: output.id };
       });
     }
+  };
+
+  saveProject = (item) => {
+    console.log(661, item);
+    const { videoPlayer } = this.state;
+    console.log(videoPlayer.video_id);
+    const videoData = {
+      video_id: videoPlayer.video_id,
+      video_title: videoPlayer.video_title,
+      video_url: videoPlayer.video_url,
+      steps: videoPlayer.steps,
+      materials: videoPlayer.materials,
+    };
+
+    item.map((projectKey) => {
+      firebase
+        .database()
+        .ref(
+          `/users/${this.context.user.user.uid}/projects/${projectKey}/${videoPlayer.video_id}`
+        )
+
+        .update(videoData);
+    });
+
+    //using the project key that is stored in 'item' update the users project data for THAT project to include the video and editable lists for materials and steps
+
+    //things to note. the projectItem page will require some pretty complex coding. Maybe not though if I make a 'videoplay' component that takes arguments to render
   };
 
   dynaDate = (datePosted) => {
@@ -90,10 +115,6 @@ export default class VideoPlayer extends React.Component {
       return `${month}/${day}/${year}`;
     }
   };
-
-  saveProject = (item) => {
-    console.log('hi', item)
-  }
 
   render() {
     const video = this.state.videoPlayer;
@@ -258,6 +279,6 @@ const styles = StyleSheet.create({
   },
   projectDropdownContainer: {
     marginVertical: 16,
-    zIndex: 2
+    zIndex: 2,
   },
 });
