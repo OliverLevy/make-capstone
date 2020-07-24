@@ -19,22 +19,15 @@ export default class ProjectList extends React.Component {
     if (this.state.projectList !== null) {
       console.log(2121, this.state.projectList);
     }
-
-    const projectKey = firebase
-      .database()
-      .ref("/users/")
-      .child("project")
-      .push().key;
-    firebase
-      .database()
-      .ref("/users/" + this.context.user.user.uid)
-      .child(`projects/`)
-      .push()
-      .update({
-        id: projectKey,
-        project_name: output,
-        date_created: Date.now(),
-      });
+    const projectKey = firebase.database().ref().child("project").push().key;
+    const projectData = {
+      id: projectKey,
+      project_name: output,
+      date_created: Date.now(),
+    };
+    const updates = {}
+    updates[`users/${this.context.user.user.uid}/projects/${projectKey}`] = projectData
+    firebase.database().ref().update(updates)
   };
 
   componentDidMount() {

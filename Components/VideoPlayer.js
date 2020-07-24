@@ -91,6 +91,10 @@ export default class VideoPlayer extends React.Component {
     }
   };
 
+  saveProject = (item) => {
+    console.log('hi', item)
+  }
+
   render() {
     const video = this.state.videoPlayer;
     if (this.state.videoPlayer === null) {
@@ -146,6 +150,7 @@ export default class VideoPlayer extends React.Component {
                   dropDownStyle={styles.dropDownPicker}
                   placeholder="SAVE TO PROJECT"
                   dropDownMaxHeight={200}
+                  onChangeItem={(item) => this.saveProject(item)}
                   // onChangeItem={(item) =>
                   //   this.setState({
                   //     savedTo: item.value,
