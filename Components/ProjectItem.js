@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  ScrollView,
 } from "react-native";
 import { Video } from "expo-av";
 import { UserContext } from "../Context/UserContext";
@@ -14,11 +15,16 @@ import firebase from "firebase";
 import { List } from "react-native-paper";
 import ArrowUp from "../assets/arrow-up.png";
 import ArrowDown from "../assets/arrow-down.png";
+import Unchecked from "../assets/check-box.png";
+import Checked from "../assets/check-box-checked.png";
 
 class Accordion extends React.Component {
   state = {
     isOpen: false,
+    isChecked: false,
   };
+
+  static contextType = UserContext;
 
   toggle = () => {
     this.state.isOpen
@@ -26,19 +32,56 @@ class Accordion extends React.Component {
       : this.setState({ isOpen: true });
   };
 
+  toggleStep = (index) => {
+    const userId = this.context.user.user.uid;
+    const projectKey = this.props.projectKey;
+    const objKey = this.props.objKey;
+    const path = this.props.path;
+    const input = this.props.data[index].is_done;
+    if (input === false) {
+      return firebase
+        .database()
+        .ref(
+          `/users/${userId}/projects/${projectKey}/saved/${objKey}/${path}/${index}`
+        )
+        .update({ is_done: true });
+    } else {
+      return firebase
+        .database()
+        .ref(
+          `/users/${userId}/projects/${projectKey}/saved/${objKey}/${path}/${index}`
+        )
+        .update({ is_done: false });
+    }
+  };
+
   handleList = (arr) => {
     return arr.map((item, i) => {
-      return <Text>{item.item}</Text>;
+      return (
+        <TouchableOpacity
+          key={i}
+          style={styles.listItem}
+          onPress={() => this.toggleStep(i)}
+        >
+          <Text>{item.item}</Text>
+          <Image
+            source={item.is_done ? Checked : Unchecked}
+            style={styles.arrowIcons}
+          />
+        </TouchableOpacity>
+      );
     });
   };
 
   render() {
-    console.log(12321, this.state.isOpen);
     return (
       <View>
-        <TouchableOpacity onPress={this.toggle} style={styles.dropdown}>
+        <TouchableOpacity onPress={this.toggle} style={styles.dropdownBtn}>
           <Text>{this.props.title}</Text>
-          <Image source={ArrowUp} style={styles.arrowIcons} />
+          <Image
+            source={this.state.isOpen ? ArrowUp : ArrowDown}
+            style={styles.arrowIcons}
+          />
         </TouchableOpacity>
         <View style={this.state.isOpen ? styles.show : styles.hide}>
           {this.handleList(this.props.data)}
@@ -58,8 +101,6 @@ export default class ProjectItem extends React.Component {
   componentDidMount() {
     const userId = this.state.userId;
     const projectId = this.props.route.params;
-    console.log(userId);
-    console.log(projectId.id);
     firebase
       .database()
       .ref(`/users/${userId}/projects/${projectId.id}`)
@@ -82,9 +123,8 @@ export default class ProjectItem extends React.Component {
       const savedKeys = Object.keys(inputObj);
       return savedKeys.map((key) => {
         const output = inputObj[key];
-        console.log(output);
         return (
-          <View>
+          <View key={key}>
             {/* <Video
               source={{ uri: output.video_url }}
               style={styles.video}
@@ -92,10 +132,21 @@ export default class ProjectItem extends React.Component {
             /> */}
             <Text>{output.video_title}</Text>
 
-            <Text>Steps</Text>
-            <Accordion title="STEPS TO FOLLOW" data={output.steps} />
-            <Text>Materials</Text>
-            <Accordion title="REQUIRED MATERIALS" data={output.materials} />
+            <Accordion
+              title="STEPS TO FOLLOW"
+              data={output.steps}
+              objKey={key}
+              projectKey={this.props.route.params.id}
+              path="steps"
+            />
+
+            <Accordion
+              title="REQUIRED MATERIALS"
+              data={output.materials}
+              objKey={key}
+              projectKey={this.props.route.params.id}
+              path="materials"
+            />
           </View>
         );
       });
@@ -104,10 +155,12 @@ export default class ProjectItem extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        {this.state.savedVideos && this.projectCard()}
-        <Text>{this.props.route.params.id}</Text>
-      </View>
+      <ScrollView>
+        <View style={styles.container}>
+          {this.state.savedVideos && this.projectCard()}
+          <Text>{this.props.route.params.id}</Text>
+        </View>
+      </ScrollView>
     );
   }
 }
@@ -130,17 +183,25 @@ const styles = StyleSheet.create({
     backgroundColor: "pink",
   },
   show: {
-    backgroundColor: "pink",
+    // backgroundColor: "pink",
   },
   hide: {
     display: "none",
   },
-  dropdown: {
-    backgroundColor: "pink",
+  dropdownBtn: {
+    // backgroundColor: "pink",
     height: 48,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   arrowIcons: {
     height: 20,
     width: 20,
+  },
+  listItem: {
+    paddingVertical: 8,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 });

@@ -25,9 +25,11 @@ export default class ProjectList extends React.Component {
       project_name: output,
       date_created: Date.now(),
     };
-    const updates = {}
-    updates[`users/${this.context.user.user.uid}/projects/${projectKey}`] = projectData
-    firebase.database().ref().update(updates)
+    const updates = {};
+    updates[
+      `users/${this.context.user.user.uid}/projects/${projectKey}`
+    ] = projectData;
+    firebase.database().ref().update(updates);
   };
 
   componentDidMount() {
