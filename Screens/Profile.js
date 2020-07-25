@@ -43,10 +43,9 @@ export default class Profile extends React.Component {
       <View>
         <Modal visible={this.state.modalIsOpen}>
           <SafeAreaView>
-            <View>
-              <Text>this is inside the modal</Text>
+            <View style={styles.content}>
               <Button title='sign out' onPress={() => firebase.auth().signOut()} />
-              <Button title="close modal" onPress={() => this.toggleModal()} />
+              <Button title="close" onPress={() => this.toggleModal()} />
             </View>
           </SafeAreaView>
         </Modal>
@@ -70,4 +69,9 @@ const styles = StyleSheet.create({
     height: 48,
     width: 48,
   },
+  content: {
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
 });

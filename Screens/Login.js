@@ -1,14 +1,20 @@
 import React from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import * as Google from "expo-google-app-auth";
 import firebase from "firebase";
+import Logo from "../assets/make-logo-white.png";
 
 export default class Login extends React.Component {
-  
   state = {
     user: {},
   };
-
 
   isUserEqual = (googleUser, firebaseUser) => {
     if (firebaseUser) {
@@ -30,62 +36,59 @@ export default class Login extends React.Component {
   onSignIn = (googleUser) => {
     console.log("Google Auth Response", googleUser);
     // We need to register an Observer on Firebase Auth to make sure auth is initialized.
-    var unsubscribe = firebase.auth().onAuthStateChanged(
-       (firebaseUser) => {
-        unsubscribe();
-        // Check if we are already signed-in Firebase with the correct user.
-        if (!this.isUserEqual(googleUser, firebaseUser)) {
-          // Build Firebase credential with the Google ID token.
-          var credential = firebase.auth.GoogleAuthProvider.credential(
-            // googleUser.getAuthResponse().id_token
-            googleUser.idToken,
-            googleUser.accessToken
-          );
-          // Sign in with credential from the Google user.
-          firebase
-            .auth()
-            .signInWithCredential(credential)
-            .then( (result) => {
-              this.props.setUser(result)
-              if (result.additionalUserInfo.isNewUser) {
-                firebase
-                  .database()
-                  .ref("/users/" + result.user.uid)
-                  .set({
-                    gmail: result.user.email,
-                    profile_picture: result.additionalUserInfo.profile.picture,
-                    locale: result.additionalUserInfo.profile.locale,
-                    first_name: result.additionalUserInfo.profile.given_name,
-                    last_name: result.additionalUserInfo.profile.family_name,
-                    create_at: Date.now(),
-                  });
-              } else {
-                firebase
-                  .database()
-                  .ref("/users/" + result.user.uid)
-                  .update({
-                    last_logged_in: Date.now(),
-                  })
-                  .then(console.log(666 ,result.user.uid))
-              }
-              
-            })
-            
-            .catch(function (error) {
-              // Handle Errors here.
-              var errorCode = error.code;
-              var errorMessage = error.message;
-              // The email of the user's account used.
-              var email = error.email;
-              // The firebase.auth.AuthCredential type that was used.
-              var credential = error.credential;
-              // ...
-            });
-        } else {
-          console.log("User already signed-in Firebase.");
-        }
+    var unsubscribe = firebase.auth().onAuthStateChanged((firebaseUser) => {
+      unsubscribe();
+      // Check if we are already signed-in Firebase with the correct user.
+      if (!this.isUserEqual(googleUser, firebaseUser)) {
+        // Build Firebase credential with the Google ID token.
+        var credential = firebase.auth.GoogleAuthProvider.credential(
+          // googleUser.getAuthResponse().id_token
+          googleUser.idToken,
+          googleUser.accessToken
+        );
+        // Sign in with credential from the Google user.
+        firebase
+          .auth()
+          .signInWithCredential(credential)
+          .then((result) => {
+            this.props.setUser(result);
+            if (result.additionalUserInfo.isNewUser) {
+              firebase
+                .database()
+                .ref("/users/" + result.user.uid)
+                .set({
+                  gmail: result.user.email,
+                  profile_picture: result.additionalUserInfo.profile.picture,
+                  locale: result.additionalUserInfo.profile.locale,
+                  first_name: result.additionalUserInfo.profile.given_name,
+                  last_name: result.additionalUserInfo.profile.family_name,
+                  create_at: Date.now(),
+                });
+            } else {
+              firebase
+                .database()
+                .ref("/users/" + result.user.uid)
+                .update({
+                  last_logged_in: Date.now(),
+                })
+                .then(console.log(666, result.user.uid));
+            }
+          })
+
+          .catch(function (error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            // The email of the user's account used.
+            var email = error.email;
+            // The firebase.auth.AuthCredential type that was used.
+            var credential = error.credential;
+            // ...
+          });
+      } else {
+        console.log("User already signed-in Firebase.");
       }
-    );
+    });
   };
 
   signInWithGoogleAsync = async () => {
@@ -108,20 +111,19 @@ export default class Login extends React.Component {
     }
   };
 
-  
-
   render() {
     return (
-        <View style={styles.container}>
-          <Text>this is the login screen</Text>
-
-          <Button
-            title="google"
-            onPress={() => {
-              this.signInWithGoogleAsync();
-            }}
-          />
-        </View>
+      <View style={styles.container}>
+        <Image source={Logo} style={styles.logo} resizeMode="contain" />
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => {
+            this.signInWithGoogleAsync();
+          }}
+        >
+          <Text style={styles.btnText}>Sign in with google</Text>
+        </TouchableOpacity>
+      </View>
     );
   }
 }
@@ -132,5 +134,25 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+    padding: 16,
+  },
+  btn: {
+    height: 48,
+    width: "100%",
+    backgroundColor: "#3772FF",
+    justifyContent: "space-around",
+    alignItems: "center",
+    borderRadius: 4,
+  },
+  btnText: {
+    color: "white",
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: "600",
+  },
+  logo: {
+    height: 50,
+    margin: 24,
   },
 });
