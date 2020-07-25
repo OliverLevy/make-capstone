@@ -11,11 +11,9 @@ import {
   KeyboardAvoidingView,
   Animated,
 } from "react-native";
-import { Video, Audio } from "expo-av";
-import firebase, { storage } from "firebase";
-import * as DocumentPicker from "expo-document-picker";
+import { Video } from "expo-av";
+import firebase from "firebase";
 import * as ImagePicker from "expo-image-picker";
-import { v4 as uuid } from "uuid";
 import { ScrollView } from "react-native-gesture-handler";
 import * as Permissions from "expo-permissions";
 import Constants from "expo-constants";
@@ -225,24 +223,24 @@ export default class Upload extends React.Component {
 
     // upload the video
     await this.uploadVideo(video.uri, uploadKey)
-      .then(() => {
-        Alert.alert("video upload success");
-      })
-      .catch((error) => {
-        Alert.alert(error);
-      });
+      // .then(() => {
+      //   Alert.alert("video upload success");
+      // })
+      // .catch((error) => {
+      //   Alert.alert(error);
+      // });
 
     // once complete, get the downloadurl from firebase and set state of videourl
     let videoUrl = await this.getVideoUrl(uploadKey);
 
     // upload the poster
     await this.uploadVideoPoster(poster.uri, uploadKey)
-      .then(() => {
-        Alert.alert("poster upload success");
-      })
-      .catch((error) => {
-        Alert.alert(error);
-      });
+      // .then(() => {
+      //   Alert.alert("poster upload success");
+      // })
+      // .catch((error) => {
+      //   Alert.alert(error);
+      // });
 
     // once complete, get the downloadurl from firebase and set state of videourl
     let posterUrl = await this.getPosterUrl(uploadKey);

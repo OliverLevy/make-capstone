@@ -1,8 +1,20 @@
 import React from "react";
-import { StyleSheet, Text, View, Button, TextInput, Alert } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TextInput,
+  Alert,
+  Animated,
+  Image,
+} from "react-native";
 import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import { UserContext } from "../Context/UserContext";
 import firebase from "firebase";
+import Swipeable from "react-native-gesture-handler/Swipeable";
+import { RectButton } from "react-native-gesture-handler";
+import DeleteIcon from "../assets/icon-delete.png";
 
 export default class ProjectList extends React.Component {
   state = {
@@ -44,6 +56,41 @@ export default class ProjectList extends React.Component {
       });
   }
 
+  dynaDate = (datePosted) => {
+    let seconds = (Date.now() - datePosted) / 1000;
+    let unix = new Date(datePosted);
+    let day = unix.getDate();
+    let month = unix.getMonth() + 1;
+    let year = unix.getFullYear();
+    if (seconds < 60) {
+      return `${Math.trunc(seconds)}s ago`;
+    } else if (seconds < 3600) {
+      return `${Math.trunc(seconds / 60)}m ago`;
+    } else if (seconds < 86400) {
+      return `${Math.trunc(seconds / 60 / 60)}h ago`;
+    } else if (seconds < 2592000) {
+      return `${Math.trunc(seconds / 30 / 60 / 60)}d ago`;
+    } else {
+      return `${month}/${day}/${year}`;
+    }
+  };
+
+  renderLeftActions = (id, dragX) => {
+    const trans = dragX.interpolate({
+      inputRange: [0, 60],
+      outputRange: [0, 0],
+    });
+    return (
+      <RectButton style={styles.leftAction} onPress={() => this.delete(id)}>
+        <Animated.Text
+          style={[styles.actionText, { transform: [{ translateX: trans }] }]}
+        >
+          <Image source={DeleteIcon} style={styles.icon} />
+        </Animated.Text>
+      </RectButton>
+    );
+  };
+
   list = () => {
     if (this.state.projectList !== null) {
       const input = this.state.projectList;
@@ -52,20 +99,24 @@ export default class ProjectList extends React.Component {
       return reverseArr.map((id) => {
         let output = input[id];
         return (
-          <TouchableOpacity
-            onPress={() =>
-              this.props.navigation.navigate("Project Item", {
-                id: output.id,
-              })
-            }
-            key={output.id}
-          >
-            <View style={styles.projectList}>
-              <Text style={styles.h3}>{output.project_name}</Text>
-              <Text style={styles.p}>{output.date_created}</Text>
-              <Text>{output.id}</Text>
-            </View>
-          </TouchableOpacity>
+          <Swipeable renderRightActions={this.renderLeftActions}>
+            <TouchableOpacity
+              style={styles.listItem}
+              onPress={() =>
+                this.props.navigation.navigate("Project Item", {
+                  id: output.id,
+                })
+              }
+              key={output.id}
+            >
+              <View style={styles.projectList}>
+                <Text style={styles.h3}>{output.project_name}</Text>
+                <Text style={styles.p}>
+                  Created {this.dynaDate(output.date_created)}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </Swipeable>
         );
       });
     }
@@ -102,6 +153,7 @@ export default class ProjectList extends React.Component {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
+    backgroundColor: "white",
   },
   inputContainer: {
     flexDirection: "row",
@@ -139,4 +191,18 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   p: {},
+  icon: {
+    height: 20,
+    width: 20,
+  },
+  leftAction: {
+    // backgroundColor: "red",
+    width: "30%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "flex-end",
+  },
+  listItem: {
+    backgroundColor: 'white'
+  }
 });
