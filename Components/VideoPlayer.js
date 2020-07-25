@@ -163,13 +163,13 @@ export default class VideoPlayer extends React.Component {
     } else {
       return (
         <View style={styles.container}>
-          {/* <Video
+          <Video
             source={{
               uri: video.video_url,
             }}
             useNativeControls
             style={styles.backgroundVideo}
-          /> */}
+          />
           <ScrollView style={styles.textContainer}>
             <View style={styles.info}>
               <Image
@@ -199,8 +199,8 @@ export default class VideoPlayer extends React.Component {
                 </View>
               </View>
             </View>
-            <View>
-              <Text>DESCRIPTION</Text>
+            <View style={styles.descriptionContainer}>
+              <Text style={styles.label}>DESCRIPTION</Text>
               <Text>{video.description}</Text>
             </View>
 
@@ -218,6 +218,7 @@ export default class VideoPlayer extends React.Component {
               subTitle={`suggested by ${video.channel_name}`}
               data={video.materials}
             />
+            <View style={styles.spacer}></View>
           </ScrollView>
         </View>
       );
@@ -255,6 +256,8 @@ const styles = StyleSheet.create({
   },
   label: {
     color: "grey",
+    fontSize: 12,
+    paddingVertical: 8,
   },
   title: {
     fontSize: 24,
@@ -309,4 +312,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  descriptionContainer: {
+    paddingVertical: 16
+  },
+  spacer: {
+    height: 100
+  }
 });

@@ -60,7 +60,8 @@ export default class VideoList extends React.Component {
     if (this.state.videoList && this.state.videoList.length !== 0) {
       const array = this.state.videoList;
       const keyArr = Object.keys(array);
-      return keyArr.map((id) => {
+      const reversed = keyArr.reverse()
+      return reversed.map((id) => {
         let output = array[id];
         let imgUrl = this.getPoster(output.id); //get rid of this
         return (

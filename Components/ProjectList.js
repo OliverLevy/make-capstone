@@ -99,7 +99,7 @@ export default class ProjectList extends React.Component {
       return reverseArr.map((id) => {
         let output = input[id];
         return (
-          <Swipeable renderRightActions={this.renderLeftActions}>
+          <Swipeable renderRightActions={this.renderLeftActions} key={output.id}>
             <TouchableOpacity
               style={styles.listItem}
               onPress={() =>
@@ -107,7 +107,7 @@ export default class ProjectList extends React.Component {
                   id: output.id,
                 })
               }
-              key={output.id}
+              
             >
               <View style={styles.projectList}>
                 <Text style={styles.h3}>{output.project_name}</Text>

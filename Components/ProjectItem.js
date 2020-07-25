@@ -58,26 +58,28 @@ class Accordion extends React.Component {
   handleList = (arr) => {
     return arr.map((item, i) => {
       return (
+        <View key={i}>
         <TouchableOpacity
-          key={i}
+          
           style={styles.listItem}
           onPress={() => this.toggleStep(i)}
         >
-          <Text>{item.item}</Text>
+          <Text style={styles.listText}>{item.item}</Text>
           <Image
             source={item.is_done ? Checked : Unchecked}
             style={styles.arrowIcons}
           />
         </TouchableOpacity>
+        </View>
       );
     });
   };
 
   render() {
     return (
-      <View>
+      <View >
         <TouchableOpacity onPress={this.toggle} style={styles.dropdownBtn}>
-          <Text>{this.props.title}</Text>
+          <Text style={styles.dropdownHeader}>{this.props.title}</Text>
           <Image
             source={this.state.isOpen ? ArrowUp : ArrowDown}
             style={styles.arrowIcons}
@@ -125,28 +127,31 @@ export default class ProjectItem extends React.Component {
         const output = inputObj[key];
         return (
           <View key={key}>
-            {/* <Video
+            <Video
               source={{ uri: output.video_url }}
               style={styles.video}
               useNativeControls
-            /> */}
-            <Text>{output.video_title}</Text>
-
-            <Accordion
-              title="STEPS TO FOLLOW"
-              data={output.steps}
-              objKey={key}
-              projectKey={this.props.route.params.id}
-              path="steps"
             />
+            <View style={styles.textConteiner}>
+              <Text>{output.video_title}</Text>
 
-            <Accordion
-              title="REQUIRED MATERIALS"
-              data={output.materials}
-              objKey={key}
-              projectKey={this.props.route.params.id}
-              path="materials"
-            />
+              <Accordion
+                title="STEPS TO FOLLOW"
+                data={output.steps}
+                objKey={key}
+                projectKey={this.props.route.params.id}
+                path="steps"
+              />
+
+              <Accordion
+                title="REQUIRED MATERIALS"
+                data={output.materials}
+                objKey={key}
+                projectKey={this.props.route.params.id}
+                path="materials"
+              />
+              <View style={styles.spacer}></View>
+            </View>
           </View>
         );
       });
@@ -155,11 +160,9 @@ export default class ProjectItem extends React.Component {
 
   render() {
     return (
-      <ScrollView>
-        <View style={styles.container}>
-          {this.state.savedVideos && this.projectCard()}
-          <Text>{this.props.route.params.id}</Text>
-        </View>
+      <ScrollView style={styles.container}>
+        <View>{this.state.savedVideos && this.projectCard()}</View>
+        <View style={styles.bottomSpacer}></View>
       </ScrollView>
     );
   }
@@ -167,7 +170,9 @@ export default class ProjectItem extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    // padding: 16,
+    height: "100%",
+    width: "100%",
     backgroundColor: "white",
   },
   video: {
@@ -203,5 +208,23 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     flexDirection: "row",
     justifyContent: "space-between",
+    width: '100%',
   },
+  textConteiner:{
+    padding: 16
+  },
+  spacer:{
+    height: 24,
+    width: '100%'
+  },
+  bottomSpacer: {
+    height: 100,
+    width: '100%'
+  },
+  listText: {
+    width: '90%'
+  },
+  dropdownHeader: {
+    fontWeight: '600'
+  }
 });
