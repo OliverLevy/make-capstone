@@ -65,15 +65,18 @@ export default class VideoList extends React.Component {
         let imgUrl = this.getPoster(output.id); //get rid of this
         return (
           <TouchableOpacity
+            key={id}
             onPress={() =>
               this.props.navigation.navigate("video player", {
                 video_id: output,
               })
             }
-            key={id}
           >
             <View>
-              <Image style={styles.poster} source={{ uri: output.poster_path }} />
+              <Image
+                style={styles.poster}
+                source={{ uri: output.poster_path }}
+              />
               <View style={styles.info}>
                 <Image style={styles.avatar} source={{ uri: output.avatar }} />
 

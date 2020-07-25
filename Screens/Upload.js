@@ -10,6 +10,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Animated,
+  ActivityIndicator,
 } from "react-native";
 import { Video } from "expo-av";
 import firebase from "firebase";
@@ -37,6 +38,7 @@ export default class Upload extends React.Component {
     materials: [],
     scrollY: null,
     scrollX: null,
+    isLoading: false,
   };
 
   static contextType = UserContext;
@@ -170,11 +172,13 @@ export default class Upload extends React.Component {
     });
   };
 
-  list = (input) => {
+  list = (name ,input) => {
     const list = input;
+    
     return input.map((item, i) => {
+      
       return (
-        <Swipeable renderRightActions={this.renderLeftActions} key={i}>
+        <Swipeable renderRightActions={(progress, dragX) => this.rightActions({progress, dragX, i, name})} key={i}>
           <Text
             style={styles.listItem}
             ref={(listItem) => {
@@ -189,20 +193,32 @@ export default class Upload extends React.Component {
     });
   };
 
-  renderLeftActions = (id, dragX) => {
+  rightActions = ({progress, dragX, name, i}) => {
+    // console.log(6969,'will this work?',input)
     const trans = dragX.interpolate({
-      inputRange: [0, 60],
-      outputRange: [0, 0],
+      inputRange: [-100, 0],
+      outputRange: [1, 0],
+      extrapolate: 'clamp'
     });
     return (
-      <RectButton style={styles.leftAction} onPress={() => this.delete(id)}>
-        <Animated.Text
-          style={[styles.actionText, { transform: [{ translateX: trans }] }]}
-        >
-          <Image source={DeleteIcon} style={styles.icon} />
-        </Animated.Text>
-      </RectButton>
+      <TouchableOpacity
+        style={styles.leftAction}
+        onPress={() => this.removeItem(name, i)}
+      >
+        <Image source={DeleteIcon} style={styles.icon} />
+      </TouchableOpacity>
     );
+  };
+
+  removeItem = (name, i) => {
+    console.log('name', name);
+    console.log('index', i);
+    const current = this.state[name]
+    current.splice(i, 1)
+    
+    this.setState({
+      [name]: current
+    })
   };
 
   setScrollPosition = (event) => {
@@ -220,82 +236,105 @@ export default class Upload extends React.Component {
     const { video, poster, title, description, steps, materials } = this.state;
     const datePosted = Date.now();
     const uploadKey = firebase.database().ref().child("uploads").push().key;
+    if (
+      !video ||
+      !poster ||
+      !title ||
+      !description ||
+      steps.length === 0 ||
+      materials.length === 0
+    ) {
+      return Alert.alert("please fill everything out");
+    } else {
+      this.setState({ isLoading: true });
+      await this.uploadVideo(video.uri, uploadKey);
 
-    // upload the video
-    await this.uploadVideo(video.uri, uploadKey)
-      // .then(() => {
-      //   Alert.alert("video upload success");
-      // })
-      // .catch((error) => {
-      //   Alert.alert(error);
-      // });
+      let videoUrl = await this.getVideoUrl(uploadKey);
 
-    // once complete, get the downloadurl from firebase and set state of videourl
-    let videoUrl = await this.getVideoUrl(uploadKey);
+      await this.uploadVideoPoster(poster.uri, uploadKey);
 
-    // upload the poster
-    await this.uploadVideoPoster(poster.uri, uploadKey)
-      // .then(() => {
-      //   Alert.alert("poster upload success");
-      // })
-      // .catch((error) => {
-      //   Alert.alert(error);
-      // });
+      let posterUrl = await this.getPosterUrl(uploadKey);
+      const videoListData = {
+        avatar: this.context.user.additionalUserInfo.profile.picture,
+        channel: this.context.user.user.displayName,
+        date_posted: datePosted,
+        likes: 0,
+        views: 0,
+        id: uploadKey,
+        title: title,
+        poster_path: posterUrl,
+      };
 
-    // once complete, get the downloadurl from firebase and set state of videourl
-    let posterUrl = await this.getPosterUrl(uploadKey);
-    // get state of all the other text inputs and upload them to the database
-    const videoListData = {
-      avatar: this.context.user.additionalUserInfo.profile.picture,
-      channel: this.context.user.user.displayName,
-      date_posted: datePosted,
-      likes: 0,
-      views: 0,
-      id: uploadKey,
-      title: title,
-      poster_path: posterUrl,
-    };
+      const videoPlayerData = {
+        channel_avatar: this.context.user.additionalUserInfo.profile.picture,
+        channel_name: this.context.user.user.displayName,
+        comments: [],
+        date_posted: datePosted,
+        description: description,
+        likes: 0,
+        materials: materials,
+        poster: posterUrl,
+        steps: steps,
+        video_id: uploadKey,
+        video_url: videoUrl,
+        video_title: title,
+        views: 0,
+      };
+      const userData = {
+        id: uploadKey,
+        title: title,
+        description: description,
+        steps: steps,
+        materials: materials,
+        poster_url: posterUrl,
+        video_url: videoUrl,
+        date_created: datePosted,
+      };
 
-    const videoPlayerData = {
-      channel_avatar: this.context.user.additionalUserInfo.profile.picture,
-      channel_name: this.context.user.user.displayName,
-      comments: [],
-      date_posted: datePosted,
-      description: description,
-      likes: 0,
-      materials: materials,
-      poster: posterUrl,
-      steps: steps,
-      video_id: uploadKey,
-      video_url: videoUrl,
-      video_title: title,
-      views: 0,
-    };
-    const userData = {
-      id: uploadKey,
-      title: title,
-      description: description,
-      steps: steps,
-      materials: materials,
-      poster_url: posterUrl,
-      video_url: videoUrl,
-      date_created: datePosted,
-    };
+      const updates = {};
+      updates[`/public/video_list/${uploadKey}`] = videoListData;
+      updates[`/public/video_player/${uploadKey}`] = videoPlayerData;
+      updates[
+        `/users/${this.context.user.user.uid}/uploads/${uploadKey}`
+      ] = userData;
 
-    const updates = {};
-    updates[`/public/video_list/${uploadKey}`] = videoListData;
-    updates[`/public/video_player/${uploadKey}`] = videoPlayerData;
-    updates[
-      `/users/${this.context.user.user.uid}/uploads/${uploadKey}`
-    ] = userData;
+      firebase
+        .database()
+        .ref()
+        .update(updates, (error) => {
+          if (error) {
+            console.log(error);
+          } else {
+            this.setState({ isLoading: false });
+          }
+        });
+      this.titleInput.clear();
+      this.descriptionInput.clear();
+      this.setState({
+        video: null,
+        poster: null,
+        steps: [],
+        materials: [],
+      });
 
-    firebase.database().ref().update(updates);
+      return Alert.alert("upload successful");
+    }
+  };
 
-    return Alert.alert("upload successful");
+  cancelHandler = () => {
+    this.titleInput.clear();
+    this.descriptionInput.clear();
+    this.setState({
+      video: null,
+      poster: null,
+      steps: [],
+      materials: [],
+    });
   };
 
   render() {
-    const { video, poster, steps, materials } = this.state;
+    const { video, poster, steps, materials, isLoading } = this.state;
+
     return (
       <KeyboardAwareScrollView
         style={styles.container}
@@ -364,7 +403,7 @@ export default class Upload extends React.Component {
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>STEPS TO FOLLOW</Text>
-          {steps.length !== 0 && this.list(steps)}
+          {steps.length !== 0 && this.list('steps',steps)}
           <TextInput
             blurOnSubmit={false}
             style={styles.input}
@@ -380,7 +419,7 @@ export default class Upload extends React.Component {
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>REQUIRED MATERIALS</Text>
-          {materials.length !== 0 && this.list(materials)}
+          {materials.length !== 0 && this.list('materials',materials)}
           <TextInput
             blurOnSubmit={false}
             style={styles.input}
@@ -399,11 +438,17 @@ export default class Upload extends React.Component {
           <Text style={styles.btnText}>UPLOAD</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={this.clear}
+          onPress={this.cancelHandler}
           style={[styles.btn, styles.cancel]}
         >
           <Text style={styles.cancelText}>CANCEL</Text>
         </TouchableOpacity>
+
+        <View style={isLoading ? styles.mask : styles.hidden}>
+          <View style={styles.activityIndicator}>
+            <ActivityIndicator />
+          </View>
+        </View>
       </KeyboardAwareScrollView>
     );
   }
@@ -478,5 +523,21 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     color: "#3772FF",
+  },
+  mask: {
+    height: "100%",
+    width: "100%",
+    backgroundColor: "rgba(255,255,255,.5)",
+    position: "absolute",
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  activityIndicator: {
+    position: "absolute",
+    bottom: 135,
+  },
+  hidden: {
+    display: "none",
   },
 });
