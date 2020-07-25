@@ -52,11 +52,11 @@ export default class VideoPlayer extends React.Component {
       });
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.videoUrl !== prevState.videoUrl) {
-      console.log(321, this.state);
-    }
-  }
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (this.state.videoUrl !== prevState.videoUrl) {
+  //     console.log(321, this.state);
+  //   }
+  // }
 
   projectList = () => {
     if (this.state.userProjects !== null) {
@@ -67,41 +67,43 @@ export default class VideoPlayer extends React.Component {
         let output = input[itemKey];
         return { label: output.project_name, value: output.id };
       });
+    } else {
+      return;
     }
   };
 
   updateSteps = (stepsArr) => {
-    const newList = stepsArr.map((step) => {
-      return { item: step, is_done: false };
-    });
-    return newList;
+    if (this.state.userProjects !== null) {
+      const newList = stepsArr.map((step) => {
+        return { item: step, is_done: false };
+      });
+      return newList;
+    }
   };
 
   saveProject = (item) => {
-    const { videoPlayer } = this.state;
-    const steps = this.updateSteps(videoPlayer.steps);
-    const materials = this.updateSteps(videoPlayer.materials);
-    const videoData = {
-      video_id: videoPlayer.video_id,
-      video_title: videoPlayer.video_title,
-      video_url: videoPlayer.video_url,
-      steps: steps,
-      materials: materials,
-    };
+    if (this.state.userProjects !== null) {
+      const { videoPlayer } = this.state;
+      const steps = this.updateSteps(videoPlayer.steps);
+      const materials = this.updateSteps(videoPlayer.materials);
+      const videoData = {
+        video_id: videoPlayer.video_id,
+        video_title: videoPlayer.video_title,
+        video_url: videoPlayer.video_url,
+        steps: steps,
+        materials: materials,
+      };
 
-    item.map((projectKey) => {
-      firebase
-        .database()
-        .ref(
-          `/users/${this.context.user.user.uid}/projects/${projectKey}/saved/${videoPlayer.video_id}`
-        )
+      item.map((projectKey) => {
+        firebase
+          .database()
+          .ref(
+            `/users/${this.context.user.user.uid}/projects/${projectKey}/saved/${videoPlayer.video_id}`
+          )
 
-        .update(videoData);
-    });
-
-    //using the project key that is stored in 'item' update the users project data for THAT project to include the video and editable lists for materials and steps
-
-    //things to note. the projectItem page will require some pretty complex coding. Maybe not though if I make a 'videoplay' component that takes arguments to render
+          .update(videoData);
+      });
+    }
   };
 
   dynaDate = (datePosted) => {
@@ -120,6 +122,37 @@ export default class VideoPlayer extends React.Component {
       return `${Math.trunc(seconds / 30 / 60 / 60)}d ago`;
     } else {
       return `${month}/${day}/${year}`;
+    }
+  };
+
+  projectDropdown = () => {
+    if (this.state.userProjects !== null && this.state.userProjects.projects) {
+      return (
+        <DropDownPicker
+          items={this.projectList()}
+          multiple={true}
+          style={styles.btn}
+          dropDownStyle={styles.dropDownPicker}
+          placeholder="SAVE TO PROJECT"
+          dropDownMaxHeight={200}
+          onChangeItem={(item) => this.saveProject(item)}
+          // onChangeItem={(item) =>
+          //   this.setState({
+          //     savedTo: item.value,
+          //   })
+          // }
+        />
+      );
+    } else {
+      return (
+        <TouchableOpacity
+          onPress={() => this.props.navigation.navigate("projects")}
+        >
+          <View style={styles.noProjectsContainer}>
+            <Text>NO PROJECTS</Text>
+          </View>
+        </TouchableOpacity>
+      );
     }
   };
 
@@ -166,26 +199,13 @@ export default class VideoPlayer extends React.Component {
                 </View>
               </View>
             </View>
-
-            <Text>{video.description}</Text>
+            <View>
+              <Text>DESCRIPTION</Text>
+              <Text>{video.description}</Text>
+            </View>
 
             <View style={styles.projectDropdownContainer}>
-              {this.state.userProjects && (
-                <DropDownPicker
-                  items={this.projectList()}
-                  multiple={true}
-                  style={styles.btn}
-                  dropDownStyle={styles.dropDownPicker}
-                  placeholder="SAVE TO PROJECT"
-                  dropDownMaxHeight={200}
-                  onChangeItem={(item) => this.saveProject(item)}
-                  // onChangeItem={(item) =>
-                  //   this.setState({
-                  //     savedTo: item.value,
-                  //   })
-                  // }
-                />
-              )}
+              {this.projectDropdown()}
             </View>
 
             <Accordion
@@ -279,5 +299,14 @@ const styles = StyleSheet.create({
   projectDropdownContainer: {
     marginVertical: 16,
     zIndex: 2,
+  },
+  noProjectsContainer: {
+    height: 48,
+    width: "100%",
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: "#3772FF",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

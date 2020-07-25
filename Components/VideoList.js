@@ -8,6 +8,7 @@ import {
   ScrollView,
   SafeAreaView,
   TouchableOpacity,
+  ActivityIndicator
 } from "react-native";
 import firebase from "firebase";
 import { UserContext } from "../Context/UserContext";
@@ -108,7 +109,11 @@ export default class VideoList extends React.Component {
         );
       });
     } else {
-      return <Text>loading...</Text>;
+      return (
+        <View style={styles.loading}>
+          <ActivityIndicator/>
+        </View>
+      )
     }
   };
 
@@ -133,7 +138,7 @@ export default class VideoList extends React.Component {
 
   render() {
     return (
-      <View style={styles.white}>
+      <View style={styles.container}>
         <SafeAreaView>
           <ScrollView>
             <View style={styles.container}>
@@ -148,9 +153,10 @@ export default class VideoList extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     backgroundColor: "#fff",
-    alignItems: "center",
+    height: '100%',
+    // alignItems: "center",
     justifyContent: "center",
   },
   poster: {
@@ -205,4 +211,11 @@ const styles = StyleSheet.create({
   data: {
     flexDirection: "row",
   },
+  loading: {
+    // height: '100%',
+    // width: '100%',
+    // // alignItems: 'center',
+    // // justifyContent: 'center',
+    // backgroundColor: 'pink'
+  }
 });
