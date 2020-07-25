@@ -58,7 +58,6 @@ export default class App extends React.Component {
 
   render() {
     if (this.state.loggedIn === true) {
-      console.log(222 ,this.state.user)
       return (
         <UserContext.Provider value={{user: this.state.user}}>
         

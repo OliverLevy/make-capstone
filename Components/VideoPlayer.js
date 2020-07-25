@@ -13,7 +13,7 @@ import { Video } from "expo-av";
 import { List } from "react-native-paper";
 import { ScrollView } from "react-native-gesture-handler";
 import DropDownPicker from "react-native-dropdown-picker";
-
+import Accordion from "./Accordion";
 import ViewsIcon from "../assets/icon-view.png";
 import LikeIcon from "../assets/icon-heart.png";
 
@@ -71,16 +71,16 @@ export default class VideoPlayer extends React.Component {
   };
 
   updateSteps = (stepsArr) => {
-    const newList = stepsArr.map(step => {
-      return {item: step, is_done: false}
-    })
-    return newList
-  }
+    const newList = stepsArr.map((step) => {
+      return { item: step, is_done: false };
+    });
+    return newList;
+  };
 
   saveProject = (item) => {
     const { videoPlayer } = this.state;
-    const steps = this.updateSteps(videoPlayer.steps)
-    const materials = this.updateSteps(videoPlayer.materials)
+    const steps = this.updateSteps(videoPlayer.steps);
+    const materials = this.updateSteps(videoPlayer.materials);
     const videoData = {
       video_id: videoPlayer.video_id,
       video_title: videoPlayer.video_title,
@@ -88,8 +88,7 @@ export default class VideoPlayer extends React.Component {
       steps: steps,
       materials: materials,
     };
-    
-    
+
     item.map((projectKey) => {
       firebase
         .database()
@@ -189,24 +188,16 @@ export default class VideoPlayer extends React.Component {
               )}
             </View>
 
-            <List.Section>
-              <List.Accordion
-                title="STEP BY STEP INSTRUCTIONS"
-                description="steps to keep you on task!"
-              >
-                {video.steps.map((item, i) => {
-                  return <List.Item title={item} key={i} />;
-                })}
-              </List.Accordion>
-              <List.Accordion
-                title="MATERIALS"
-                description={`Materials suggested by ${video.channel_name}`}
-              >
-                {video.materials.map((item, i) => {
-                  return <List.Item title={item} key={i} />;
-                })}
-              </List.Accordion>
-            </List.Section>
+            <Accordion
+              title="STEP BY STEP INSTRUCTIONS"
+              subTitle=""
+              data={video.steps}
+            />
+            <Accordion
+              title={`MATERIALS`}
+              subTitle={`suggested by ${video.channel_name}`}
+              data={video.materials}
+            />
           </ScrollView>
         </View>
       );

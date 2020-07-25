@@ -38,7 +38,6 @@ export default class Main extends React.Component {
               </HomeStack.Navigator>
             );
           } else {
-            console.log(333, user.user);
             return (
               <View style={styles.container}>
                 <Text>loading... or sign out and try again</Text>

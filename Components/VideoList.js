@@ -29,7 +29,6 @@ export default class VideoList extends React.Component {
       .database()
       .ref("/public/video_list/")
       .on("value", (suc) => {
-        console.log(666, suc.val());
         this.setState({
           videoList: suc.val(),
         });
