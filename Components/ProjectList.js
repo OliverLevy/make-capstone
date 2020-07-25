@@ -69,11 +69,6 @@ export default class ProjectList extends React.Component {
         );
       });
     }
-
-    // const output = this.state.projectList.map((item) => {
-    //   return <Text>{item}</Text>;
-    // });
-    // return output.reverse();
   };
 
   render() {
@@ -98,11 +93,6 @@ export default class ProjectList extends React.Component {
             />
           </View>
           {this.list()}
-
-          <Button
-            title="go to project item"
-            onPress={() => this.props.navigation.navigate("Project Item")}
-          />
         </ScrollView>
       </View>
     );

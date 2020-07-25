@@ -125,11 +125,11 @@ export default class ProjectItem extends React.Component {
         const output = inputObj[key];
         return (
           <View key={key}>
-            {/* <Video
+            <Video
               source={{ uri: output.video_url }}
               style={styles.video}
               useNativeControls
-            /> */}
+            />
             <Text>{output.video_title}</Text>
 
             <Accordion
