@@ -16,27 +16,21 @@ import Profile from "../Screens/Profile";
 
 const HomeStack = createStackNavigator();
 
-export default class Main extends React.Component {
-  componentDidMount() {
-    console.log("main component mounted");
-  }
-
-  render() {
-    return (
-      <HomeStack.Navigator>
-        <HomeStack.Screen
-          name="video list"
-          component={VideoList}
-          options={{ headerShown: false }}
-        />
-        <HomeStack.Screen
-          name="video player"
-          component={VideoPlayer}
-          options={{ headerShown: false }}
-        />
-      </HomeStack.Navigator>
-    );
-  }
+export default function Main() {
+  return (
+    <HomeStack.Navigator>
+      <HomeStack.Screen
+        name="video list"
+        component={VideoList}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="video player"
+        component={VideoPlayer}
+        options={{ headerShown: false }}
+      />
+    </HomeStack.Navigator>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -47,14 +41,3 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
-
-{
-  /* <View style={styles.container}>
-                <Text>Main section</Text>
-                <Text>Good morning {user.user.additionalUserInfo.profile.given_name}</Text>
-                <Button
-                  title="Sign Out"
-                  onPress={() => firebase.auth().signOut()}
-                />
-              </View> */
-}

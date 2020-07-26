@@ -35,13 +35,11 @@ export default class App extends React.Component {
     this.setState({
       user: user,
     });
-    console.log("the state was set");
   };
 
   checkIfLoggedIn = () => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        console.log(6969, user);
         this.setState({
           loggedIn: true,
           user: user
@@ -58,12 +56,7 @@ export default class App extends React.Component {
     this.checkIfLoggedIn();
   }
 
-  componentDidUpdate(_prevProps, prevState) {
-    if (this.state.user !== prevState.user) {
-      console.log("the component updated yalllllll", this.state.user );
-      // this.checkIfLoggedIn();
-    }
-  }
+ 
 
   render() {
     if (this.state.loggedIn === true) {

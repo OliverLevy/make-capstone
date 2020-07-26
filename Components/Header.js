@@ -40,7 +40,6 @@ export default class Header extends React.Component {
   };
 
   render() {
-    console.log(this.context.user.photoURL)
     return (
       <View style={styles.headerBarContainer}>
         <SafeAreaView style={styles.headerBar}>

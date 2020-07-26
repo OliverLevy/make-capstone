@@ -29,7 +29,6 @@ export default class VideoPlayer extends React.Component {
   static contextType = UserContext;
 
   componentDidMount() {
-    console.log(this.props.route.params.video_id.id);
     firebase
       .database()
       .ref(`public/video_player/${this.props.route.params.video_id.id}`)
@@ -52,11 +51,7 @@ export default class VideoPlayer extends React.Component {
       });
   }
 
-  // componentDidUpdate(prevProps, prevState) {
-  //   if (this.state.videoUrl !== prevState.videoUrl) {
-  //     console.log(321, this.state);
-  //   }
-  // }
+  
 
   projectList = () => {
     if (this.state.userProjects !== null) {
@@ -149,7 +144,7 @@ export default class VideoPlayer extends React.Component {
           onPress={() => this.props.navigation.navigate("projects")}
         >
           <View style={styles.noProjectsContainer}>
-            <Text>NO PROJECTS</Text>
+            <Text>CREATE A PROJECT TO SAVE THIS VIDEO</Text>
           </View>
         </TouchableOpacity>
       );

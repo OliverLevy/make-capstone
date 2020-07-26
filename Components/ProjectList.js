@@ -28,9 +28,7 @@ export default class ProjectList extends React.Component {
     this.textInput.clear();
     const output = this.state.newProject;
 
-    if (this.state.projectList !== null) {
-      console.log(2121, this.state.projectList);
-    }
+    // if (this.state.projectList !== null) {}
     const projectKey = firebase.database().ref().child("project").push().key;
     const projectData = {
       id: projectKey,

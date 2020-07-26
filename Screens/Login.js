@@ -34,7 +34,6 @@ export default class Login extends React.Component {
   };
 
   onSignIn = (googleUser) => {
-    console.log("Google Auth Response", googleUser);
     // We need to register an Observer on Firebase Auth to make sure auth is initialized.
     var unsubscribe = firebase.auth().onAuthStateChanged((firebaseUser) => {
       unsubscribe();
@@ -51,7 +50,6 @@ export default class Login extends React.Component {
           .auth()
           .signInWithCredential(credential)
           .then((result) => {
-            console.log(2121, result)
             this.props.setUser(result);
             if (result.additionalUserInfo.isNewUser) {
               firebase

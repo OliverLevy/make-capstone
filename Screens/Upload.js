@@ -132,7 +132,6 @@ export default class Upload extends React.Component {
       .ref(`/videos/${id}`)
       .getDownloadURL()
       .then((videoUrl) => {
-        console.log(911, videoUrl);
         return videoUrl;
       })
       .catch((err) => {
@@ -147,7 +146,6 @@ export default class Upload extends React.Component {
       .ref(`/videos_poster/${id}`)
       .getDownloadURL()
       .then((posterUrl) => {
-        console.log(119, posterUrl);
         return posterUrl;
       })
       .catch((err) => {
@@ -194,7 +192,6 @@ export default class Upload extends React.Component {
   };
 
   rightActions = ({progress, dragX, name, i}) => {
-    // console.log(6969,'will this work?',input)
     const trans = dragX.interpolate({
       inputRange: [-100, 0],
       outputRange: [1, 0],
@@ -211,8 +208,6 @@ export default class Upload extends React.Component {
   };
 
   removeItem = (name, i) => {
-    console.log('name', name);
-    console.log('index', i);
     const current = this.state[name]
     current.splice(i, 1)
     

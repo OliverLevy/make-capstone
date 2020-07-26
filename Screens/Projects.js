@@ -2,28 +2,26 @@ import React from "react";
 import { StyleSheet, Text, View, Button, TextInput } from "react-native";
 import firebase from "firebase";
 import { createStackNavigator } from "@react-navigation/stack";
-import ProjectList from '../Components/ProjectList'
-import ProjectItem from '../Components/ProjectItem'
+import ProjectList from "../Components/ProjectList";
+import ProjectItem from "../Components/ProjectItem";
 
-const ProjectStack = createStackNavigator()
+const ProjectStack = createStackNavigator();
 
-export default class Projects extends React.Component {
-  render() {
-    return (
-      <ProjectStack.Navigator>
-        <ProjectStack.Screen
-          name="Project list"
-          component={ProjectList}
-          options={{ headerShown: false }}
-        />
-        <ProjectStack.Screen
-          name="Project Item"
-          component={ProjectItem}
-          options={{ headerShown: false }}
-        />
-      </ProjectStack.Navigator>
-    );
-  }
+export default function Projects() {
+  return (
+    <ProjectStack.Navigator>
+      <ProjectStack.Screen
+        name="Project list"
+        component={ProjectList}
+        options={{ headerShown: false }}
+      />
+      <ProjectStack.Screen
+        name="Project Item"
+        component={ProjectItem}
+        options={{ headerShown: false }}
+      />
+    </ProjectStack.Navigator>
+  );
 }
 
 const styles = StyleSheet.create({
