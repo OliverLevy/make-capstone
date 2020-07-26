@@ -69,7 +69,7 @@ export default class Login extends React.Component {
                 .ref("/users/" + result.user.uid)
                 .update({
                   last_logged_in: Date.now(),
-                })
+                });
             }
           })
 
@@ -113,13 +113,18 @@ export default class Login extends React.Component {
     return (
       <View style={styles.container}>
         <Image source={Logo} style={styles.logo} resizeMode="contain" />
+        <Text style={styles.welcome}>
+          Welcome to<Text style={styles.accent}> make</Text>!
+        </Text>
+        {/* <Text style={styles.tagLine}>- your go to for all projects</Text> */}
+        <Text style={styles.text}>Sign in with</Text>
         <TouchableOpacity
           style={styles.btn}
           onPress={() => {
             this.signInWithGoogleAsync();
           }}
         >
-          <Text style={styles.btnText}>Sign in with google</Text>
+          <Text style={styles.btnText}>Google</Text>
         </TouchableOpacity>
       </View>
     );
@@ -144,6 +149,8 @@ const styles = StyleSheet.create({
   },
   btnText: {
     color: "white",
+    fontWeight: '600',
+    fontSize: 20
   },
   header: {
     fontSize: 20,
@@ -153,4 +160,22 @@ const styles = StyleSheet.create({
     height: 50,
     margin: 24,
   },
+  text: {
+    paddingTop: 24,
+    paddingBottom: 8,
+    fontStyle: 'italic'
+  },
+  accent: {
+    color: "#3772FF",
+    fontStyle: 'italic'
+  },
+  welcome: {
+    fontSize: 20,
+    fontWeight: '600',
+    padding: 8
+  },
+  tagLine: {
+    fontStyle: 'italic',
+    paddingBottom: 20
+  }
 });

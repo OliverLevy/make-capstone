@@ -32,13 +32,6 @@ export default class VideoList extends React.Component {
           videoList: suc.val(),
         });
       });
-    // .then((suc) => {
-    //   console.log(444, suc);
-    //   const output = suc.val();
-    //   this.setState({
-    //     videoList: output,
-    //   });
-    // });
   }
 
   getPoster = (id) => {

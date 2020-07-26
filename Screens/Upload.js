@@ -338,7 +338,7 @@ export default class Upload extends React.Component {
           this._scrollPosition = scrollPosition;
         }}
       >
-        <Text>Upload</Text>
+        <Text style={styles.header}>UPLOAD</Text>
         {video && (
           <Video
             source={{ uri: video.uri }}
@@ -535,4 +535,11 @@ const styles = StyleSheet.create({
   hidden: {
     display: "none",
   },
+  header: {
+    // backgroundColor: 'pink',
+    // textAlign: 'center',
+    fontWeight: '600',
+    fontSize: 24,
+    paddingVertical: 16
+  }
 });
