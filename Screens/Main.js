@@ -1,5 +1,11 @@
 import React from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  ActivityIndicator,
+} from "react-native";
 import firebase from "firebase";
 import { UserContext } from "../Context/UserContext";
 import { NavigationContainer } from "@react-navigation/native";
@@ -17,35 +23,18 @@ export default class Main extends React.Component {
 
   render() {
     return (
-      <UserContext.Consumer>
-        {(user) => {
-          if (
-            {/* user.user.additionalUserInfo &&
-            user.user.additionalUserInfo.profile */}
-          ) {
-            return (
-              <HomeStack.Navigator>
-                <HomeStack.Screen
-                  name="video list"
-                  component={VideoList}
-                  options={{ headerShown: false }}
-                />
-                <HomeStack.Screen
-                  name="video player"
-                  component={VideoPlayer}
-                  options={{ headerShown: false }}
-                />
-              </HomeStack.Navigator>
-            );
-          } else {
-            return (
-              <View style={styles.container}>
-                <Text>loading... or sign out and try again</Text>
-              </View>
-            );
-          }
-        }}
-      </UserContext.Consumer>
+      <HomeStack.Navigator>
+        <HomeStack.Screen
+          name="video list"
+          component={VideoList}
+          options={{ headerShown: false }}
+        />
+        <HomeStack.Screen
+          name="video player"
+          component={VideoPlayer}
+          options={{ headerShown: false }}
+        />
+      </HomeStack.Navigator>
     );
   }
 }
