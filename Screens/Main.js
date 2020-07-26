@@ -20,8 +20,8 @@ export default class Main extends React.Component {
       <UserContext.Consumer>
         {(user) => {
           if (
-            user.user.additionalUserInfo &&
-            user.user.additionalUserInfo.profile
+            {/* user.user.additionalUserInfo &&
+            user.user.additionalUserInfo.profile */}
           ) {
             return (
               <HomeStack.Navigator>

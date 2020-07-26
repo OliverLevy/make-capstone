@@ -25,11 +25,11 @@ export default class Header extends React.Component {
   static contextType = UserContext;
 
   addAvatar = () => {
-    if (this.context.user.user) {
+    if (this.context.user) {
       return (
         <Image
           source={{
-            uri: this.context.user.additionalUserInfo.profile.picture,
+            uri: this.context.user.photoURL,
           }}
           style={styles.avatar}
         />
@@ -40,6 +40,7 @@ export default class Header extends React.Component {
   };
 
   render() {
+    console.log(this.context.user.photoURL)
     return (
       <View style={styles.headerBarContainer}>
         <SafeAreaView style={styles.headerBar}>

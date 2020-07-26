@@ -51,6 +51,7 @@ export default class Login extends React.Component {
           .auth()
           .signInWithCredential(credential)
           .then((result) => {
+            console.log(2121, result)
             this.props.setUser(result);
             if (result.additionalUserInfo.isNewUser) {
               firebase
@@ -71,7 +72,6 @@ export default class Login extends React.Component {
                 .update({
                   last_logged_in: Date.now(),
                 })
-                .then(console.log(666, result.user.uid));
             }
           })
 

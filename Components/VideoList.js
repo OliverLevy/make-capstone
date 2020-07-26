@@ -19,12 +19,13 @@ export default class VideoList extends React.Component {
   state = {
     videoList: [],
     user: {},
-    userId: this.context.user.user.uid,
+    // userId: this.context.user.uid,
   };
 
-  static contextType = UserContext;
+  // static contextType = UserContext;
 
   componentDidMount() {
+    // console.log(6969, this.context)
     const id = this.state.userId;
     firebase
       .database()
@@ -63,7 +64,7 @@ export default class VideoList extends React.Component {
       const reversed = keyArr.reverse()
       return reversed.map((id) => {
         let output = array[id];
-        let imgUrl = this.getPoster(output.id); //get rid of this
+        // let imgUrl = this.getPoster(output.id); //get rid of this
         return (
           <TouchableOpacity
             key={id}

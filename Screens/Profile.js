@@ -12,11 +12,11 @@ export default class Profile extends React.Component {
   static contextType = UserContext;
 
   addAvatar = () => {
-    if (this.context.user.user) {
+    if (this.context.user) {
       return (
         <Image
           source={{
-            uri: this.context.user.additionalUserInfo.profile.picture,
+            uri: this.context.user.photoURL,
           }}
           style={styles.avatar}
         />

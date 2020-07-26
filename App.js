@@ -20,7 +20,7 @@ import Main from "./Screens/Main";
 import Projects from "./Screens/Projects";
 import Upload from "./Screens/Upload";
 import Cart from "./Screens/Cart";
-import Header from './Components/Header'
+import Header from "./Components/Header";
 
 const AuthStack = createStackNavigator();
 const Tabs = createBottomTabNavigator();
@@ -41,8 +41,10 @@ export default class App extends React.Component {
   checkIfLoggedIn = () => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
+        console.log(6969, user);
         this.setState({
           loggedIn: true,
+          user: user
         });
       } else {
         this.setState({
@@ -56,14 +58,20 @@ export default class App extends React.Component {
     this.checkIfLoggedIn();
   }
 
+  componentDidUpdate(_prevProps, prevState) {
+    if (this.state.user !== prevState.user) {
+      console.log("the component updated yalllllll", this.state.user );
+      // this.checkIfLoggedIn();
+    }
+  }
+
   render() {
     if (this.state.loggedIn === true) {
       return (
-        <UserContext.Provider value={{user: this.state.user}}>
-        
+        <UserContext.Provider value={{ user: this.state.user }}>
           <NavigationContainer>
             <StatusBar style="auto" />
-            <Header/>
+            <Header />
             <Tabs.Navigator>
               <Tabs.Screen name="home" component={Main} />
               <Tabs.Screen name="projects" component={Projects} />
@@ -94,5 +102,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-  }
+  },
 });
