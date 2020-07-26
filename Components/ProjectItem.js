@@ -59,17 +59,16 @@ class Accordion extends React.Component {
     return arr.map((item, i) => {
       return (
         <View key={i}>
-        <TouchableOpacity
-          
-          style={styles.listItem}
-          onPress={() => this.toggleStep(i)}
-        >
-          <Text style={styles.listText}>{item.item}</Text>
-          <Image
-            source={item.is_done ? Checked : Unchecked}
-            style={styles.arrowIcons}
-          />
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.listItem}
+            onPress={() => this.toggleStep(i)}
+          >
+            <Text style={styles.listText}>{item.item}</Text>
+            <Image
+              source={item.is_done ? Checked : Unchecked}
+              style={styles.arrowIcons}
+            />
+          </TouchableOpacity>
         </View>
       );
     });
@@ -77,7 +76,7 @@ class Accordion extends React.Component {
 
   render() {
     return (
-      <View >
+      <View>
         <TouchableOpacity onPress={this.toggle} style={styles.dropdownBtn}>
           <Text style={styles.dropdownHeader}>{this.props.title}</Text>
           <Image
@@ -113,11 +112,19 @@ export default class ProjectItem extends React.Component {
       });
   }
 
-  //   componentDidUpdate(_prevProps, prevState){
-  // if(this.state.savedVideos !== prevState){
-  //   this.projectCard()
-  // }
-  //   }
+  projectProgress = (arr) => {
+    const completed = arr.filter((item) => item.is_done === true);
+    const percent = Math.round((completed.length / arr.length) * 100);
+    if (percent === 100) {
+      return (
+        <Text>
+          {percent}% completed! <Text style={styles.accent}>- Good Job!</Text>{" "}
+        </Text>
+      );
+    } else {
+      return <Text>{percent}% completed</Text>;
+    }
+  };
 
   projectCard = () => {
     if (this.state.savedVideos && this.state.savedVideos.saved) {
@@ -126,15 +133,15 @@ export default class ProjectItem extends React.Component {
       return savedKeys.map((key) => {
         const output = inputObj[key];
         return (
-          <View key={key}>
+          <View key={key} style={styles.projectCard}>
             {/* <Video
               source={{ uri: output.video_url }}
               style={styles.video}
               useNativeControls
             /> */}
             <View style={styles.textConteiner}>
-              <Text>{output.video_title}</Text>
-
+              <Text style={styles.title}>{output.video_title}</Text>
+              {this.projectProgress(output.steps)}
               <Accordion
                 title="STEPS TO FOLLOW"
                 data={output.steps}
@@ -170,7 +177,6 @@ export default class ProjectItem extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    // padding: 16,
     height: "100%",
     width: "100%",
     backgroundColor: "white",
@@ -187,14 +193,10 @@ const styles = StyleSheet.create({
     color: "pink",
     backgroundColor: "pink",
   },
-  show: {
-    // backgroundColor: "pink",
-  },
   hide: {
     display: "none",
   },
   dropdownBtn: {
-    // backgroundColor: "pink",
     height: 48,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -208,23 +210,45 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     flexDirection: "row",
     justifyContent: "space-between",
-    width: '100%',
+    width: "100%",
   },
-  textConteiner:{
-    padding: 16
+  textConteiner: {
+    padding: 16,
   },
-  spacer:{
+  spacer: {
     height: 24,
-    width: '100%'
+    width: "100%",
   },
   bottomSpacer: {
     height: 100,
-    width: '100%'
+    width: "100%",
   },
   listText: {
-    width: '90%'
+    width: "90%",
   },
   dropdownHeader: {
-    fontWeight: '600'
-  }
+    fontWeight: "600",
+  },
+  accent: {
+    color: "#3772FF",
+    fontWeight: "600",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "600",
+    paddingBottom: 8,
+  },
+  projectCard: {
+    marginBottom: 56,
+    backgroundColor: "white",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
+  },
 });

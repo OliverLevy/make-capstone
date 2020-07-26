@@ -73,13 +73,25 @@ export default class ProjectList extends React.Component {
     }
   };
 
-  renderLeftActions = (id, dragX) => {
+  deleteProject = (id) => {
+    firebase
+      .database()
+      .ref(`users/${this.context.user.uid}/projects/${id}`)
+      .update({
+        isDeleted: true,
+      });
+  };
+
+  rightActions = ({ progress, dragX, id }) => {
     const trans = dragX.interpolate({
       inputRange: [0, 60],
       outputRange: [0, 0],
     });
     return (
-      <RectButton style={styles.leftAction} onPress={() => this.delete(id)}>
+      <RectButton
+        style={styles.leftAction}
+        onPress={() => this.deleteProject(id)}
+      >
         <Animated.Text
           style={[styles.actionText, { transform: [{ translateX: trans }] }]}
         >
@@ -96,26 +108,36 @@ export default class ProjectList extends React.Component {
       const reverseArr = keyArr.reverse();
       return reverseArr.map((id) => {
         let output = input[id];
-        return (
-          <Swipeable renderRightActions={this.renderLeftActions} key={output.id}>
-            <TouchableOpacity
-              style={styles.listItem}
-              onPress={() =>
-                this.props.navigation.navigate("Project Item", {
-                  id: output.id,
-                })
-              }
-              
-            >
-              <View style={styles.projectList}>
-                <Text style={styles.h3}>{output.project_name}</Text>
-                <Text style={styles.p}>
-                  Created {this.dynaDate(output.date_created)}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </Swipeable>
-        );
+        if (
+          !output.isDeleted ||
+          (output.isDeleted && output.isDeleted !== true)
+        ) {
+          return (
+            <View key={output.id} style={styles.projectCard}>
+              <Swipeable
+                renderRightActions={(progress, dragX) =>
+                  this.rightActions({ progress, dragX, id })
+                }
+              >
+                <TouchableOpacity
+                  style={styles.listItem}
+                  onPress={() =>
+                    this.props.navigation.navigate("Project Item", {
+                      id: output.id,
+                    })
+                  }
+                >
+                  <View style={styles.projectList}>
+                    <Text style={styles.h3}>{output.project_name}</Text>
+                    <Text style={styles.p}>
+                      Created {this.dynaDate(output.date_created)}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </Swipeable>
+            </View>
+          );
+        }
       });
     }
   };
@@ -150,8 +172,8 @@ export default class ProjectList extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
     backgroundColor: "white",
+    height: '100%'
   },
   inputContainer: {
     flexDirection: "row",
@@ -160,7 +182,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 48,
-    // width: "60%",
+    margin: 16,
     borderRadius: 4,
     borderColor: "#3772FF",
     borderWidth: 2,
@@ -188,10 +210,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "600",
   },
-  p: {},
+  p: {
+    paddingVertical: 8
+  },
   icon: {
     height: 20,
     width: 20,
+    
   },
   leftAction: {
     // backgroundColor: "red",
@@ -201,6 +226,20 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   listItem: {
-    backgroundColor: 'white'
-  }
+    backgroundColor: "white",
+  },
+  projectCard: {
+    paddingHorizontal: 16,
+    marginBottom: 36,
+    backgroundColor: "white",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
+  },
 });
