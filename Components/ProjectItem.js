@@ -33,7 +33,7 @@ class Accordion extends React.Component {
   };
 
   toggleStep = (index) => {
-    const userId = this.context.user.user.uid;
+    const userId = this.context.user.uid;
     const projectKey = this.props.projectKey;
     const objKey = this.props.objKey;
     const path = this.props.path;
@@ -96,7 +96,7 @@ class Accordion extends React.Component {
 export default class ProjectItem extends React.Component {
   state = {
     savedVideos: null,
-    userId: this.context.user.user.uid,
+    userId: this.context.user.uid,
   };
   static contextType = UserContext;
 
@@ -127,11 +127,11 @@ export default class ProjectItem extends React.Component {
         const output = inputObj[key];
         return (
           <View key={key}>
-            <Video
+            {/* <Video
               source={{ uri: output.video_url }}
               style={styles.video}
               useNativeControls
-            />
+            /> */}
             <View style={styles.textConteiner}>
               <Text>{output.video_title}</Text>
 

@@ -163,13 +163,13 @@ export default class VideoPlayer extends React.Component {
     } else {
       return (
         <View style={styles.container}>
-          <Video
+          {/* <Video
             source={{
               uri: video.video_url,
             }}
             useNativeControls
             style={styles.backgroundVideo}
-          />
+          /> */}
           <ScrollView style={styles.textContainer}>
             <View style={styles.info}>
               <Image
