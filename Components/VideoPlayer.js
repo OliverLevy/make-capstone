@@ -43,7 +43,7 @@ export default class VideoPlayer extends React.Component {
 
     firebase
       .database()
-      .ref(`users/${this.context.user.user.uid}`)
+      .ref(`users/${this.context.user.uid}`)
       .on("value", (suc) => {
         const output = suc.val();
         this.setState({
@@ -98,7 +98,7 @@ export default class VideoPlayer extends React.Component {
         firebase
           .database()
           .ref(
-            `/users/${this.context.user.user.uid}/projects/${projectKey}/saved/${videoPlayer.video_id}`
+            `/users/${this.context.user.uid}/projects/${projectKey}/saved/${videoPlayer.video_id}`
           )
 
           .update(videoData);

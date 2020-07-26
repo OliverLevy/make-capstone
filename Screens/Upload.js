@@ -255,8 +255,8 @@ export default class Upload extends React.Component {
 
       let posterUrl = await this.getPosterUrl(uploadKey);
       const videoListData = {
-        avatar: this.context.user.additionalUserInfo.profile.picture,
-        channel: this.context.user.user.displayName,
+        avatar: this.context.user.photoURL,
+        channel: this.context.user.displayName,
         date_posted: datePosted,
         likes: 0,
         views: 0,
@@ -266,8 +266,8 @@ export default class Upload extends React.Component {
       };
 
       const videoPlayerData = {
-        channel_avatar: this.context.user.additionalUserInfo.profile.picture,
-        channel_name: this.context.user.user.displayName,
+        channel_avatar: this.context.user.photoURL,
+        channel_name: this.context.user.displayName,
         comments: [],
         date_posted: datePosted,
         description: description,
@@ -295,7 +295,7 @@ export default class Upload extends React.Component {
       updates[`/public/video_list/${uploadKey}`] = videoListData;
       updates[`/public/video_player/${uploadKey}`] = videoPlayerData;
       updates[
-        `/users/${this.context.user.user.uid}/uploads/${uploadKey}`
+        `/users/${this.context.user.uid}/uploads/${uploadKey}`
       ] = userData;
 
       firebase

@@ -39,7 +39,7 @@ export default class ProjectList extends React.Component {
     };
     const updates = {};
     updates[
-      `users/${this.context.user.user.uid}/projects/${projectKey}`
+      `users/${this.context.user.uid}/projects/${projectKey}`
     ] = projectData;
     firebase.database().ref().update(updates);
   };
@@ -47,7 +47,7 @@ export default class ProjectList extends React.Component {
   componentDidMount() {
     firebase
       .database()
-      .ref(`/users/${this.context.user.user.uid}/projects`)
+      .ref(`/users/${this.context.user.uid}/projects`)
       .on("value", (suc) => {
         this.setState({
           projectList: suc.val(),
