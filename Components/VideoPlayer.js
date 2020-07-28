@@ -92,6 +92,7 @@ export default class VideoPlayer extends React.Component {
       const keyArr = Object.keys(input);
       const reversedArr = keyArr.reverse();
       return reversedArr.map((itemKey) => {
+        console.log(input[itemKey])
         let output = input[itemKey];
         return { label: output.project_name, value: output.id };
       });
