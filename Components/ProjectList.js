@@ -120,7 +120,11 @@ export default class ProjectList extends React.Component {
       return (
         <View style={styles.progressContainer}>
           <Text style={styles.progressPercent}>{output} %</Text>
-          <Text style={styles.progressLabel}>COMPLETE!</Text>
+          {output === 100 ? (
+            <Text style={styles.progressLabel}>COMPLETED! 🎉</Text>
+          ) : (
+            <Text style={styles.progressLabel}>COMPLETED!</Text>
+          )}
         </View>
       );
     }
@@ -263,9 +267,9 @@ const styles = StyleSheet.create({
   },
   listItem: {
     backgroundColor: "white",
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between'
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   projectCard: {
     paddingHorizontal: 16,
@@ -282,6 +286,14 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   progressContainer: {
-    backgroundColor: 'pink'
-  }
+    alignItems: "center",
+  },
+  progressPercent: {
+    color: "#3772FF",
+    fontSize: 24,
+    fontWeight: "600",
+  },
+  progressLabel: {
+    color: "#3772FF",
+  },
 });
