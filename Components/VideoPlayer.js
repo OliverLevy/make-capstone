@@ -40,6 +40,7 @@ export default class VideoPlayer extends React.Component {
         this.setState({
           videoPlayer: output,
         });
+        this.addView();
       });
 
     firebase
@@ -52,6 +53,38 @@ export default class VideoPlayer extends React.Component {
         });
       });
   }
+
+  addView = () => {
+    const views = ++this.state.videoPlayer.views;
+
+    firebase
+      .database()
+      .ref(`public/video_player/${this.props.route.params.video_id.id}`)
+      .update({ views: views });
+
+    firebase
+      .database()
+      .ref(`public/video_list/${this.props.route.params.video_id.id}`)
+      .update({ views: views });
+  };
+
+  addLike = () => {
+    const likes = ++this.state.videoPlayer.likes
+
+    this.setState({
+      videoPlayer: {...this.state.videoPlayer, likes: likes}
+    })
+
+    firebase
+      .database()
+      .ref(`public/video_player/${this.props.route.params.video_id.id}`)
+      .update({ likes: likes });
+
+    firebase
+      .database()
+      .ref(`public/video_list/${this.props.route.params.video_id.id}`)
+      .update({ likes: likes });
+  };
 
   projectList = () => {
     if (this.state.userProjects !== null) {
@@ -184,10 +217,10 @@ export default class VideoPlayer extends React.Component {
                       {this.dynaDate(Number(video.date_posted))}
                     </Text>
                     <View style={styles.data}>
-                      <View style={styles.iconContainer}>
+                      <TouchableOpacity onPress={this.addLike} style={styles.iconContainer}>
                         <Image source={LikeIcon} style={styles.icon} />
                         <Text style={styles.p}>{video.likes}</Text>
-                      </View>
+                      </TouchableOpacity>
                       <View style={styles.iconContainer}>
                         <Image source={ViewsIcon} style={styles.icon} />
                         <Text style={styles.p}>{video.views}</Text>
@@ -293,12 +326,12 @@ const styles = StyleSheet.create({
     width: "100%",
     borderColor: "#3772FF",
     borderWidth: 2,
-    zIndex: 2
+    zIndex: 2,
   },
   dropDownPicker: {
     borderColor: "#3772FF",
     borderWidth: 2,
-    zIndex: 2
+    zIndex: 2,
   },
   projectDropdownContainer: {
     marginVertical: 16,
