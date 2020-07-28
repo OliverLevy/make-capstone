@@ -16,6 +16,8 @@ import DropDownPicker from "react-native-dropdown-picker";
 import Accordion from "./Accordion";
 import ViewsIcon from "../assets/icon-view.png";
 import LikeIcon from "../assets/icon-heart.png";
+import Comments from "./Comments";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 
 export default class VideoPlayer extends React.Component {
   state = {
@@ -50,8 +52,6 @@ export default class VideoPlayer extends React.Component {
         });
       });
   }
-
-  
 
   projectList = () => {
     if (this.state.userProjects !== null) {
@@ -158,63 +158,67 @@ export default class VideoPlayer extends React.Component {
     } else {
       return (
         <View style={styles.container}>
-          <Video
+          {/* <Video
             source={{
               uri: video.video_url,
             }}
             useNativeControls
             style={styles.backgroundVideo}
-          />
-          <ScrollView style={styles.textContainer}>
-            <View style={styles.info}>
-              <Image
-                source={{ uri: video.channel_avatar }}
-                style={styles.avatar}
-              />
+          /> */}
 
-              <View style={styles.infoText}>
-                <View style={styles.titleContainer}>
-                  <Text style={styles.title}>{video.video_title}</Text>
-                  <Text style={styles.p}>{video.channel_name}</Text>
-                </View>
-                <View style={styles.dataContainer}>
-                  <Text style={styles.p}>
-                    {this.dynaDate(Number(video.date_posted))}
-                  </Text>
-                  <View style={styles.data}>
-                    <View style={styles.iconContainer}>
-                      <Image source={LikeIcon} style={styles.icon} />
-                      <Text style={styles.p}>{video.likes}</Text>
-                    </View>
-                    <View style={styles.iconContainer}>
-                      <Image source={ViewsIcon} style={styles.icon} />
-                      <Text style={styles.p}>{video.views}</Text>
+          <KeyboardAwareScrollView>
+            <View style={styles.textContainer}>
+              <View style={styles.info}>
+                <Image
+                  source={{ uri: video.channel_avatar }}
+                  style={styles.avatar}
+                />
+
+                <View style={styles.infoText}>
+                  <View style={styles.titleContainer}>
+                    <Text style={styles.title}>{video.video_title}</Text>
+                    <Text style={styles.p}>{video.channel_name}</Text>
+                  </View>
+                  <View style={styles.dataContainer}>
+                    <Text style={styles.p}>
+                      {this.dynaDate(Number(video.date_posted))}
+                    </Text>
+                    <View style={styles.data}>
+                      <View style={styles.iconContainer}>
+                        <Image source={LikeIcon} style={styles.icon} />
+                        <Text style={styles.p}>{video.likes}</Text>
+                      </View>
+                      <View style={styles.iconContainer}>
+                        <Image source={ViewsIcon} style={styles.icon} />
+                        <Text style={styles.p}>{video.views}</Text>
+                      </View>
                     </View>
                   </View>
                 </View>
               </View>
-            </View>
-            <View style={styles.descriptionContainer}>
-              <Text style={styles.label}>DESCRIPTION</Text>
-              <Text>{video.description}</Text>
-            </View>
+              <View style={styles.descriptionContainer}>
+                <Text style={styles.label}>DESCRIPTION</Text>
+                <Text>{video.description}</Text>
+              </View>
 
-            <View style={styles.projectDropdownContainer}>
-              {this.projectDropdown()}
-            </View>
+              <View style={styles.projectDropdownContainer}>
+                {this.projectDropdown()}
+              </View>
 
-            <Accordion
-              title="STEP BY STEP INSTRUCTIONS"
-              subTitle=""
-              data={video.steps}
-            />
-            <Accordion
-              title={`MATERIALS`}
-              subTitle={`suggested by ${video.channel_name}`}
-              data={video.materials}
-            />
+              <Accordion
+                title="STEP BY STEP INSTRUCTIONS"
+                subTitle=""
+                data={video.steps}
+              />
+              <Accordion
+                title={`MATERIALS`}
+                subTitle={`suggested by ${video.channel_name}`}
+                data={video.materials}
+              />
+            </View>
+            <Comments data={video} />
             <View style={styles.spacer}></View>
-          </ScrollView>
+          </KeyboardAwareScrollView>
         </View>
       );
     }
@@ -289,10 +293,12 @@ const styles = StyleSheet.create({
     width: "100%",
     borderColor: "#3772FF",
     borderWidth: 2,
+    zIndex: 2
   },
   dropDownPicker: {
     borderColor: "#3772FF",
     borderWidth: 2,
+    zIndex: 2
   },
   projectDropdownContainer: {
     marginVertical: 16,
@@ -308,9 +314,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   descriptionContainer: {
-    paddingVertical: 16
+    paddingVertical: 16,
   },
   spacer: {
-    height: 100
-  }
+    height: 100,
+  },
 });

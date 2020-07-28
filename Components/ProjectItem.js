@@ -134,11 +134,11 @@ export default class ProjectItem extends React.Component {
         const output = inputObj[key];
         return (
           <View key={key} style={styles.projectCard}>
-            <Video
+            {/* <Video
               source={{ uri: output.video_url }}
               style={styles.video}
               useNativeControls
-            />
+            /> */}
             <View style={styles.textConteiner}>
               <Text style={styles.title}>{output.video_title}</Text>
               {this.projectProgress(output.steps)}
