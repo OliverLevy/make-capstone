@@ -101,6 +101,42 @@ export default class ProjectList extends React.Component {
     );
   };
 
+  projectProgress = (obj) => {
+    let length = 0;
+    let completed = 0;
+    if (obj.saved) {
+      const objKeys = Object.entries(obj.saved);
+      objKeys.map((item) => {
+        const input = item[1].steps;
+        length += input.length;
+        input.map((step) => {
+          if (step.is_done) {
+            completed++;
+          }
+        });
+      });
+
+      const output = Math.round((completed / length) * 100);
+      return (
+        <View style={styles.progressContainer}>
+          <Text style={styles.progressPercent}>{output} %</Text>
+          <Text style={styles.progressLabel}>COMPLETE!</Text>
+        </View>
+      );
+    }
+    // const completed = arr.filter((item) => item.is_done === true);
+    // const percent = Math.round((completed.length / arr.length) * 100);
+    // if (percent === 100) {
+    //   return (
+    //     <Text>
+    //       {percent}% completed! <Text style={styles.accent}>- Good Job!</Text>{" "}
+    //     </Text>
+    //   );
+    // } else {
+    //   return <Text>{percent}% completed</Text>;
+    // }
+  };
+
   list = () => {
     if (this.state.projectList !== null) {
       const input = this.state.projectList;
@@ -133,6 +169,7 @@ export default class ProjectList extends React.Component {
                       Created {this.dynaDate(output.date_created)}
                     </Text>
                   </View>
+                  {this.projectProgress(output)}
                 </TouchableOpacity>
               </Swipeable>
             </View>
@@ -173,7 +210,7 @@ export default class ProjectList extends React.Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
-    height: '100%'
+    height: "100%",
   },
   inputContainer: {
     flexDirection: "row",
@@ -211,12 +248,11 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   p: {
-    paddingVertical: 8
+    paddingVertical: 8,
   },
   icon: {
     height: 20,
     width: 20,
-    
   },
   leftAction: {
     // backgroundColor: "red",
@@ -227,6 +263,9 @@ const styles = StyleSheet.create({
   },
   listItem: {
     backgroundColor: "white",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
   },
   projectCard: {
     paddingHorizontal: 16,
@@ -242,4 +281,7 @@ const styles = StyleSheet.create({
 
     elevation: 5,
   },
+  progressContainer: {
+    backgroundColor: 'pink'
+  }
 });
