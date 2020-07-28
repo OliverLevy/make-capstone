@@ -166,12 +166,21 @@ export default class ProjectItem extends React.Component {
   };
 
   render() {
-    return (
-      <ScrollView style={styles.container}>
-        <View>{this.state.savedVideos && this.projectCard()}</View>
-        <View style={styles.bottomSpacer}></View>
-      </ScrollView>
-    );
+    if (this.state.savedVideos && !this.state.savedVideos.saved) {
+      return (
+        <View style={styles.noVideos}>
+          <Text style={styles.noVideosText}>No videos saved!</Text>
+          <Text style={styles.noVideosSubText}>To save a video to your project, click the 'SAVE TO PROJECT' button while watching a video</Text>
+        </View>
+      );
+    } else {
+      return (
+        <ScrollView style={styles.container}>
+          <View>{this.state.savedVideos && this.projectCard()}</View>
+          <View style={styles.bottomSpacer}></View>
+        </ScrollView>
+      );
+    }
   }
 }
 
@@ -251,4 +260,19 @@ const styles = StyleSheet.create({
 
     elevation: 5,
   },
+  noVideos: {
+    backgroundColor: "white",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  noVideosText: {
+    fontSize: 20,
+    fontWeight: "600",
+  },
+  noVideosSubText: {
+    textAlign: 'center',
+    padding: 16
+  },
+
 });
